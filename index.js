@@ -178,43 +178,64 @@ async function startProo() {
     msgRetryCounterCache,
     syncFullHistory: false,
   });
- if (!Naufra.authState.creds.registered) {
-  const number = process.env.WHATSAPP_NUMBER;
+let pairingRequested = false;
 
-  if (!number || !/^\d+$/.test(number)) {
-    console.log(chalk.red("❌ Configura WHATSAPP_NUMBER en las variables de Railway."));
-    process.exit(1);
-  }
+Naufra.ev.on("connection.update", async (update) => {
+  const { connection, lastDisconnect } = update;
 
-  console.log(chalk.yellow("⌛ Solicitando código de vinculación..."));
+  if (
+    (connection === "connecting" || update.qr) &&
+    !Naufra.authState.creds.registered &&
+    !pairingRequested
+  ) {
+    pairingRequested = true;
 
-  try {
-    const code = await Naufra.requestPairingCode(number);
-    console.log(chalk.bgGreen.black("✅ CÓDIGO DE VINCULACIÓN:"), chalk.white(code));
-  } catch (err) {
-    console.error(chalk.red("❌ Error al generar código de vinculación:"), err.message);
-    process.exit(1);
-  }
-}
+    const number = process.env.WHATSAPP_NUMBER;
 
-  // 🔄 Monitorear el estado de conexión
-  Naufra.ev.on("connection.update", async (update) => {
-    const { connection, lastDisconnect } = update;
-
-    if (connection === "close") {
-      const reason = new Boom(lastDisconnect?.error)?.output?.statusCode;
-      console.log(chalk.magenta("🩺 Motivo del corte -> código:"), reason, chalk.magenta("| mensaje:"), lastDisconnect?.error?.message)
-      if (reason === DisconnectReason.loggedOut) {
-        console.log(chalk.red("❌ Sesión cerrada. Borra la carpeta 'session' y vuelve a emparejar."));
-      } else {
-        console.log(chalk.yellow("⚠️ Conexión cerrada, reconectando..."));
-        startProo();
-      }
-    } else if (connection === "open") {
-      console.log(chalk.greenBright("✅ Conectado exitosamente"));
-      exec("rm -rf tmp && mkdir tmp");
+    if (!number || !/^\d+$/.test(number)) {
+      console.log(chalk.red("❌ Revisa WHATSAPP_NUMBER en Railway."));
+      process.exit(1);
     }
-  });
+
+    try {
+      console.log(chalk.yellow("⌛ Esperando conexión para solicitar código..."));
+      await delay(3000);
+
+      const code = await Naufra.requestPairingCode(number);
+
+      console.log(
+        chalk.bgGreen.black("✅ CÓDIGO DE VINCULACIÓN:"),
+        chalk.white(code)
+      );
+    } catch (err) {
+      console.error(
+        chalk.red("❌ Error al generar código:"),
+        err.message
+      );
+    }
+  }
+
+  if (connection === "close") {
+    const reason = new Boom(lastDisconnect?.error)?.output?.statusCode;
+
+    console.log(
+      chalk.magenta("🩺 Motivo del corte -> código:"),
+      reason,
+      chalk.magenta("| mensaje:"),
+      lastDisconnect?.error?.message
+    );
+
+    if (reason === DisconnectReason.loggedOut) {
+      console.log(chalk.red("❌ Sesión cerrada. Revisa la sesión de WhatsApp."));
+    } else {
+      console.log(chalk.yellow("⚠️ Conexión cerrada, reconectando..."));
+      startProo();
+    }
+  } else if (connection === "open") {
+    console.log(chalk.greenBright("✅ Conectado exitosamente"));
+    exec("rm -rf tmp && mkdir tmp");
+  }
+});
 
   // Guardar credenciales cuando se actualicen
   Naufra.ev.on("creds.update", saveCreds);
