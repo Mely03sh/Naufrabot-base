@@ -156,7 +156,7 @@ const cacheSet = (jid, data) => groupCache.set(jid, { data, t: Date.now() })
 // ══════════════════════════════════════════════════════════
 async function startProo() {
   console.log(banner.string);
-  console.log(chalk.cyanBright("🔥 NaufraBot Base V6"));
+  console.log(chalk.cyanBright("🔥 SC BOT"));
 
   // Estado de sesión
   const { state, saveCreds } = await useMultiFileAuthState("./session");
