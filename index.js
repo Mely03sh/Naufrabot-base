@@ -178,30 +178,24 @@ async function startProo() {
     msgRetryCounterCache,
     syncFullHistory: false,
   });
-  if (!Naufra.authState.creds.registered) {
-    const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
-    const question = (text) => new Promise((resolve) => rl.question(text, resolve))
+ if (!Naufra.authState.creds.registered) {
+  const number = process.env.WHATSAPP_NUMBER;
 
-    let number = await question(
-      chalk.cyan("📱 Escribe tu número de WhatsApp con código de país (solo números): ")
-    );
-    rl.close();
-    number = number.replace(/[^0-9]/g, "");
-
-    if (!number) {
-      console.log(chalk.red("❌ Número inválido."));
-      process.exit(1);
-    }
-
-    console.log(chalk.yellow("⌛ Solicitando código de vinculación..."));
-    try {
-      const code = await Naufra.requestPairingCode(number);
-      console.log(chalk.bgGreen.black("✅ CÓDIGO DE VINCULACIÓN:"), chalk.white(code));
-    } catch (err) {
-      console.error(chalk.red("❌ Error al generar código de vinculación:"), err.message);
-      process.exit(1);
-    }
+  if (!number || !/^\d+$/.test(number)) {
+    console.log(chalk.red("❌ Configura WHATSAPP_NUMBER en las variables de Railway."));
+    process.exit(1);
   }
+
+  console.log(chalk.yellow("⌛ Solicitando código de vinculación..."));
+
+  try {
+    const code = await Naufra.requestPairingCode(number);
+    console.log(chalk.bgGreen.black("✅ CÓDIGO DE VINCULACIÓN:"), chalk.white(code));
+  } catch (err) {
+    console.error(chalk.red("❌ Error al generar código de vinculación:"), err.message);
+    process.exit(1);
+  }
+}
 
   // 🔄 Monitorear el estado de conexión
   Naufra.ev.on("connection.update", async (update) => {
