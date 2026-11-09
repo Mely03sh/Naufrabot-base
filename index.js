@@ -760,6 +760,7 @@ break
 case 'comando2':
 enviar(`🧩Este es un comando nuevo`);
 break
+
 case 'lista': {
   if (!isGroup) return enviar(respuesta.grupos)
   if (!isGroupAdmins) return enviar(respuesta.admin)
@@ -775,54 +776,58 @@ case 'lista': {
     ['clk', 'CLK'],
   ])
 
-  const campos = q.split('|').map(campo => campo.trim())
-  const [tipo, fecha, hora, cupos = '4'] = campos
+  const entrada = /^(.+?)\s+((?:0?[1-9]|1[0-2])(?::[0-5]\d)?\s*(?:am|pm)|(?:[01]?\d|2[0-3]):[0-5]\d)(?:\s*\|\s*(\d+))?$/i.exec(q.trim())
+  const [, tipo = '', hora = '', cupos = '4'] = entrada || []
   const clave = removeAccents(tipo.toLowerCase()).replace(/\s+/g, ' ')
   const formato = formatos.get(clave)
 
-  if (campos.length < 3 || campos.length > 4 || !formato ||
-      !/^(?:[1-9]|[1-4]\d|50)$/.test(cupos)) {
+  if (!formato || !/^(?:[1-9]|[1-4]\d|50)$/.test(cupos)) {
     return enviar([
       '🎮 *Listas de Free Fire*',
-      `Ejemplo: ${prefixo}lista scrim femenina | 21/11/2026 | 7 pm | 4`,
-      'Usa hora de Colombia (7 pm, 7:30 pm o 19:00).',
-      'Cupos opcionales: de 1 a 50. Por defecto: 4.',
+      `Ejemplo: ${prefixo}lista scrim femenina 7pm`,
+      'También puedes escribir 7:30pm o 19:00.',
+      'Para cambiar los cupos, agrega | 6 al final.',
       `Formatos: ${[...formatos.values()].join(', ')}.`,
     ].join('\n'))
   }
 
-  const horaColombia = hora.toLowerCase().replace(/\s+/g, ' ')
+  const fecha = moment.tz('America/Bogota').format('DD/MM/YYYY')
+  const horaColombia = hora.toLowerCase().replace(/\s*(am|pm)$/, ' $1')
   const evento = moment.tz(`${fecha} ${horaColombia}`, [
     'DD/MM/YYYY H:mm',
     'DD/MM/YYYY h:mm a',
     'DD/MM/YYYY h a',
   ], 'en', true, 'America/Bogota')
 
-  if (!evento.isValid() || evento.format('DD/MM/YYYY') !== fecha) {
-    return enviar('📅 Revisa la fecha y la hora de Colombia. Ejemplo: 21/11/2026 | 7 pm.')
+  if (!evento.isValid()) {
+    return enviar('🕒 Escribe la hora de Colombia como 7pm, 7:30pm o 19:00.')
   }
 
   const zonas = [
     ['🇲🇽', 'America/Mexico_City'],
+    ['🇸🇻', 'America/El_Salvador'],
+    ['🇵🇦', 'America/Panama'],
     ['🇨🇴', 'America/Bogota'],
-    ['🇪🇨', 'America/Guayaquil'],
-    ['🇵🇪', 'America/Lima'],
     ['🇻🇪', 'America/Caracas'],
-    ['🇩🇴', 'America/Santo_Domingo'],
-    ['🇨🇱', 'America/Santiago'],
-    ['🇦🇷', 'America/Argentina/Buenos_Aires'],
+    ['🇺🇸 Este', 'America/New_York'],
+    ['🇺🇸 Centro', 'America/Chicago'],
+    ['🇺🇸 Montaña', 'America/Denver'],
+    ['🇺🇸 Pacífico', 'America/Los_Angeles'],
+    ['🇺🇸 Alaska', 'America/Anchorage'],
+    ['🇺🇸 Hawái', 'Pacific/Honolulu'],
   ]
 
   const horarios = new Map()
-  for (const [bandera, zona] of zonas) {
+  for (const [etiqueta, zona] of zonas) {
     const local = evento.clone().tz(zona)
     const fechaLocal = local.format('DD/MM/YYYY')
     const horaLocal = local.format('HH:mm')
-    const etiqueta = fechaLocal === fecha
+    const horario = fechaLocal === fecha
       ? horaLocal
       : `${horaLocal} (${fechaLocal})`
 
-    horarios.set(etiqueta, (horarios.get(etiqueta) || '') + bandera)
+    if (!horarios.has(horario)) horarios.set(horario, [])
+    horarios.get(horario).push(etiqueta)
   }
 
   const nombreAdmin = pushname.replace(/\s+/g, ' ').trim()
@@ -834,7 +839,7 @@ case 'lista': {
     `│ *📅 Fecha:* ${fecha}`,
     '│ *🗺️ Mapas:* 🗺️ Bermuda, 🌆 Purgatorio, 🌇 Kalahari',
     '│ *🕒 Horarios:*',
-    ...[...horarios].map(([horaLocal, banderas]) => `│ ⌬${horaLocal}:${banderas}`),
+    ...[...horarios].map(([horario, lugares]) => `│ ⌬${horario}: ${lugares.join(' ')}`),
     '╰───────◇◆◇──────────╯',
     '❀•━━━━━━━━━━━━•❀',
     '   𖤐 ESCUADRA 𖤐',
@@ -851,6 +856,9 @@ case 'lista': {
   ].join('\n'), nombreAdmin ? {} : { mentions: [sender] })
 
   break
+}
+   
+ 
 }
 //Comandos owner
 
