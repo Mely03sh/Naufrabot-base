@@ -832,8 +832,6 @@ case 'lista': {
 
   const nombreAdmin = pushname.replace(/\s+/g, ' ').trim()
   const organiza = nombreAdmin || `@${senderNumber}`
-
-  enviar([
   
       const estilos = {
     'scrim femenina': {
