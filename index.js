@@ -834,27 +834,49 @@ case 'lista': {
   const organiza = nombreAdmin || `@${senderNumber}`
 
   enviar([
-    `ㅤ       ⊹˚.⋆ *《 \`${formato}\` 》* ⋆.˚⊹`,
+  
+      const estilos = {
+    'scrim femenina': {
+      titulo: '💜˚₊‧୨୧',
+      cierre: '୨୧‧₊˚💜',
+      borde: '୨୧ ━━━━━ 💜 ━━━━━ ୨୧',
+      cupo: '✦💜',
+    },
+    'scrim mixta': {
+      titulo: '💙⚡',
+      cierre: '⚡💜',
+      borde: '◆ ━━━━━ 💙💜 ━━━━━ ◆',
+      cupo: '✦⚡',
+    },
+  }
+
+  const estilo = estilos[clave] || {
+    titulo: '⊹˚.⋆',
+    cierre: '⋆.˚⊹',
+    borde: '❀•━━━━━━━━━━━━•❀',
+    cupo: '✦🖤',
+  }
+
+  enviar([
+    `${estilo.titulo} *《 \`${formato}\` 》* ${estilo.cierre}`,
     '╭───◎◎◎◎◎◎◎◎◎◎◎◎◎◎◎◎───╮',
     `│ *📅 Fecha:* ${fecha}`,
-    '│ *🗺️ Mapas:* 🗺️ Bermuda, 🌆 Purgatorio, 🌇 Kalahari',
     '│ *🕒 Horarios:*',
     ...[...horarios].map(([horario, lugares]) => `│ ⌬${horario}: ${lugares.join(' ')}`),
     '╰───────◇◆◇──────────╯',
-    '❀•━━━━━━━━━━━━•❀',
+    estilo.borde,
     '   𖤐 ESCUADRA 𖤐',
-    '❀•━━━━━━━━━━━━•❀',
-    ...Array(Number(cupos)).fill('✦🖤'),
+    estilo.borde,
+    ...Array(Number(cupos)).fill(estilo.cupo),
     '',
-    '❀•━━━━━━━━━━━━•❀',
+    estilo.borde,
     '   𖤐 SUPLENTES 𖤐',
-    '❀•━━━━━━━━━━━━•❀',
-    '✦🖤',
-    '✦🖤',
+    estilo.borde,
+    estilo.cupo,
+    estilo.cupo,
     '',
     `❀• *ᡣ𐭩 Organiza:* ${organiza}`,
   ].join('\n'), nombreAdmin ? {} : { mentions: [sender] })
-
   break
    
  
