@@ -760,6 +760,98 @@ break
 case 'comando2':
 enviar(`🧩Este es un comando nuevo`);
 break
+case 'lista': {
+  if (!isGroup) return enviar(respuesta.grupos)
+  if (!isGroupAdmins) return enviar(respuesta.admin)
+
+  const formatos = new Map([
+    ['scrim femenina', 'SCRIM FEMENINA'],
+    ['scrim mixta', 'SCRIM MIXTA'],
+    ['hexagonal', 'HEXAGONAL'],
+    ['cuadrilatero', 'CUADRILÁTERO'],
+    ['liga femenina', 'LIGA FEMENINA'],
+    ['liga mixta', 'LIGA MIXTA'],
+    ['vv2', 'VV2'],
+    ['clk', 'CLK'],
+  ])
+
+  const campos = q.split('|').map(campo => campo.trim())
+  const [tipo, fecha, hora, cupos = '4'] = campos
+  const clave = removeAccents(tipo.toLowerCase()).replace(/\s+/g, ' ')
+  const formato = formatos.get(clave)
+
+  if (campos.length < 3 || campos.length > 4 || !formato ||
+      !/^(?:[1-9]|[1-4]\d|50)$/.test(cupos)) {
+    return enviar([
+      '🎮 *Listas de Free Fire*',
+      `Ejemplo: ${prefixo}lista scrim femenina | 21/11/2026 | 7 pm | 4`,
+      'Usa hora de Colombia (7 pm, 7:30 pm o 19:00).',
+      'Cupos opcionales: de 1 a 50. Por defecto: 4.',
+      `Formatos: ${[...formatos.values()].join(', ')}.`,
+    ].join('\n'))
+  }
+
+  const horaColombia = hora.toLowerCase().replace(/\s+/g, ' ')
+  const evento = moment.tz(`${fecha} ${horaColombia}`, [
+    'DD/MM/YYYY H:mm',
+    'DD/MM/YYYY h:mm a',
+    'DD/MM/YYYY h a',
+  ], 'en', true, 'America/Bogota')
+
+  if (!evento.isValid() || evento.format('DD/MM/YYYY') !== fecha) {
+    return enviar('📅 Revisa la fecha y la hora de Colombia. Ejemplo: 21/11/2026 | 7 pm.')
+  }
+
+  const zonas = [
+    ['🇲🇽', 'America/Mexico_City'],
+    ['🇨🇴', 'America/Bogota'],
+    ['🇪🇨', 'America/Guayaquil'],
+    ['🇵🇪', 'America/Lima'],
+    ['🇻🇪', 'America/Caracas'],
+    ['🇩🇴', 'America/Santo_Domingo'],
+    ['🇨🇱', 'America/Santiago'],
+    ['🇦🇷', 'America/Argentina/Buenos_Aires'],
+  ]
+
+  const horarios = new Map()
+  for (const [bandera, zona] of zonas) {
+    const local = evento.clone().tz(zona)
+    const fechaLocal = local.format('DD/MM/YYYY')
+    const horaLocal = local.format('HH:mm')
+    const etiqueta = fechaLocal === fecha
+      ? horaLocal
+      : `${horaLocal} (${fechaLocal})`
+
+    horarios.set(etiqueta, (horarios.get(etiqueta) || '') + bandera)
+  }
+
+  const nombreAdmin = pushname.replace(/\s+/g, ' ').trim()
+  const organiza = nombreAdmin || `@${senderNumber}`
+
+  enviar([
+    `ㅤ       ⊹˚.⋆ *《 \`${formato}\` 》* ⋆.˚⊹`,
+    '╭───◎◎◎◎◎◎◎◎◎◎◎◎◎◎◎◎───╮',
+    `│ *📅 Fecha:* ${fecha}`,
+    '│ *🗺️ Mapas:* 🗺️ Bermuda, 🌆 Purgatorio, 🌇 Kalahari',
+    '│ *🕒 Horarios:*',
+    ...[...horarios].map(([horaLocal, banderas]) => `│ ⌬${horaLocal}:${banderas}`),
+    '╰───────◇◆◇──────────╯',
+    '❀•━━━━━━━━━━━━•❀',
+    '   𖤐 ESCUADRA 𖤐',
+    '❀•━━━━━━━━━━━━•❀',
+    ...Array(Number(cupos)).fill('✦🖤'),
+    '',
+    '❀•━━━━━━━━━━━━•❀',
+    '   𖤐 SUPLENTES 𖤐',
+    '❀•━━━━━━━━━━━━•❀',
+    '✦🖤',
+    '✦🖤',
+    '',
+    `❀• *ᡣ𐭩 Organiza:* ${organiza}`,
+  ].join('\n'), nombreAdmin ? {} : { mentions: [sender] })
+
+  break
+}
 //Comandos owner
 
 
