@@ -856,7 +856,6 @@ case 'lista': {
   ].join('\n'), nombreAdmin ? {} : { mentions: [sender] })
 
   break
-}
    
  
 }
