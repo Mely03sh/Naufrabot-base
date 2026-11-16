@@ -48,7 +48,7 @@ function mentioned(ctx){const x=ctx.info&&ctx.info.message;const c=x&&(x.extende
 function randomMember(ctx,exclude){const a=(ctx.groupMembers||[]).map(x=>x.id||x.phoneNumber).filter(x=>x&&!exclude.includes(x));return a.length?pick(a):null;}
 function send(ctx,t,mentions){return ctx.Naufra.sendMessage(ctx.from,{text:t,mentions:mentions||[]},{quoted:ctx.info});}
 function pending(ctx,type){const key=ctx.from+'|'+type,x=db.pending[key];if(!x||x.expiresAt<Date.now()){if(x){delete db.pending[key];save();}return null;}return x;}
-function setPending(chat,type,x){db.pending[chat+'|'+type]=Object.assign({},x,{expiresAt:Date.now()+90000});}
+function setPending(chat,type,x){db.pending[chat+'|'+type]=Object.assign({},x,{expiresAt:Date.now()+90000});save();}
 function clearPending(chat,type){delete db.pending[chat+'|'+type];save();}
 async function handle(ctx){
  const c=ctx.comando,pfx=ctx.prefixo||'.',q=String(ctx.q||'').trim(),id=ctx.sender;
