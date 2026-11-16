@@ -203,7 +203,7 @@ test('compliment tags the selected group member', async () => {
 });
 
 test('targeted advice and compliment require a tagged or replied-to person', async () => {
-  const advice = makeCtx({ comando: 'ngconsejo' });
+  const advice = makeCtx({ comando: 'ngconsejo', sender: '555@s.whatsapp.net' });
   await games.handle(advice);
   assert.match(advice.sent[0][1].text, /etiqueta a la persona o responde/);
 
