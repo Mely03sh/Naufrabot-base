@@ -202,15 +202,15 @@ async function handle(ctx){
  case 'ngconfesion':await send(ctx,'🤫 *CONFESIÓN*\\n\\n'+pick(['Confiesa una pequeña travesura de tu infancia.','¿Qué canción te sabes completa y te da pena admitirlo?','¿Cuál es tu gusto culposo?','¿Qué mentira piadosa has dicho recientemente?','¿Qué hábito extraño tienes?']));award(id,1,false,ctx.from);return true;
  case 'ngconsejo':{
   const target=mentioned(ctx);
-  if(!target){await send(ctx,'💡 Para dar un consejo, etiqueta a la persona o responde a uno de sus mensajes.\\nEjemplo: '+pfx+'ngconsejo @persona');return true;}
+  if(!target){await send(ctx,'💡 Para dar un consejo, etiqueta a la persona o responde a uno de sus mensajes.\nEjemplo: '+pfx+'ngconsejo @persona');return true;}
   const advice=pick(['No te compares con nadie: tu proceso también merece respeto.','No tomes decisiones permanentes por emociones pasajeras.','Descansa cuando lo necesites; cuidar de ti también es avanzar.','Rodéate de personas que celebren tus logros y respeten tus límites.','No tengas miedo de empezar de nuevo: también es una forma de valentía.','Escucha consejos, pero no entregues a otros el timón de tu vida.','Sé paciente contigo: estás aprendiendo cosas que antes no sabías.','A veces decir “no” es la mejor manera de cuidar tu paz.']);
-  await send(ctx,'💡 *UN CONSEJO PARA TI*\\n\\n'+mention(target)+', '+advice,[target]);award(id,1,false,ctx.from);return true;
+  await send(ctx,'💡 *UN CONSEJO PARA TI*\n\n'+mention(target)+', '+advice,[target]);award(id,1,false,ctx.from);return true;
  }
  case 'ngpiropo':{
   const target=mentioned(ctx);
-  if(!target){await send(ctx,'💐 Para dedicar un piropo, etiqueta a la persona o responde a uno de sus mensajes.\\nEjemplo: '+pfx+'ngpiropo @persona');return true;}
+  if(!target){await send(ctx,'💐 Para dedicar un piropo, etiqueta a la persona o responde a uno de sus mensajes.\nEjemplo: '+pfx+'ngpiropo @persona');return true;}
   const compliments=pick(['Tu sonrisa tiene el poder de alegrar cualquier día.','Tienes una luz propia que no necesita competir con nadie.','Hay personas bonitas y luego estás tú, que además transmites buena energía.','Tu forma de ser hace que este grupo sea un poquito más especial.','Si la alegría tuviera nombre, hoy llevaría el tuyo.','No necesitas filtros: tu mejor encanto es ser tú.','Tu presencia convierte un momento sencillo en uno especial.','Qué bonito coincidir con alguien que transmite tanta buena vibra.']);
-  await send(ctx,'💐 *UN PIROPO PARA TI*\\n\\n'+mention(target)+', '+compliments,[target]);award(id,1,false,ctx.from);return true;
+  await send(ctx,'💐 *UN PIROPO PARA TI*\n\n'+mention(target)+', '+compliments,[target]);award(id,1,false,ctx.from);return true;
  }
  case 'ngsuerte':{
   const fortunes=['🍀 Hoy es un buen día para intentar algo nuevo.','✨ Una conversación inesperada te alegrará el día.','🌟 Tu esfuerzo está más cerca de dar frutos.','💛 Comparte una buena energía y volverá a ti.','🎯 Una oportunidad aparece cuando menos lo esperas.'];
