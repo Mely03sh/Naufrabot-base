@@ -867,7 +867,10 @@ case 'lista': {
     const fechaTexto = fechaReferencia === fechaEvento ? '' : ` (${fechaReferencia})`
 
     if (!horarios.has(claveHorario)) {
-      const [horaNumero, minutoNumero] = horaLocal.split(':').map(Number)\n      const esPM = horaLocal.endsWith('PM')\n      const minutosDelDia = (horaNumero % 12 + (esPM ? 12 : 0)) * 60 + minutoNumero\n      horarios.set(claveHorario, { hora: `${horaLocal}${fechaTexto}`, minutosDelDia, paises: [] })
+      const [horaNumero, minutoNumero] = horaLocal.split(':').map(Number)
+      const esPM = horaLocal.endsWith('PM')
+      const minutosDelDia = (horaNumero % 12 + (esPM ? 12 : 0)) * 60 + minutoNumero
+      horarios.set(claveHorario, { hora: `${horaLocal}${fechaTexto}`, minutosDelDia, paises: [] })
     }
     horarios.get(claveHorario).paises.push(etiqueta)
   }
