@@ -13,7 +13,8 @@ function resolveDataPath(relativePath) {
   if (typeof relativePath !== 'string' || !relativePath.trim()) {
     throw new TypeError('Se requiere una ruta relativa de datos.');
   }
-  const normalized = relativePath.split(String.fromCharCode(92)).join('/').replace(/^\\/+/, '');
+  let normalized = relativePath.split(String.fromCharCode(92)).join('/');
+  while (normalized.startsWith('/')) normalized = normalized.slice(1);
   const target = path.resolve(DATA_ROOT, normalized);
   if (target !== DATA_ROOT && !target.startsWith(DATA_ROOT + path.sep)) {
     throw new Error('Ruta de datos fuera del directorio persistente.');
@@ -42,7 +43,7 @@ function writeJson(relativePath, value) {
   const target = resolveDataPath(relativePath);
   fs.mkdirSync(path.dirname(target), { recursive: true });
   const temp = target + '.tmp';
-  fs.writeFileSync(temp, JSON.stringify(value, null, 2) + '\\n');
+  fs.writeFileSync(temp, JSON.stringify(value, null, 2) + String.fromCharCode(10));
   fs.renameSync(temp, target);
 }
 
