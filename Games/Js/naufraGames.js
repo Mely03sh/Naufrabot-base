@@ -73,11 +73,11 @@ async function handle(ctx){
   else await send(ctx,'❌ Esa no es la respuesta. ¡Inténtalo otra vez!');return true;
  }
  case 'verdad':await send(ctx,'💬 *VERDAD*\n\n'+pick(TRUTHS));award(id,1,false,ctx.from);return true;
- case 'reto':await send(ctx,'🔥 *RETO*\n\n'+pick(DARES));award(id,1,false);return true;
- case 'pregunta':await send(ctx,'💭 *PREGUNTA PARA EL GRUPO*\n\n'+pick(GROUP_QUESTIONS)+'\n\n¡Que todos participen!');award(id,1,false);return true;
+ case 'reto':await send(ctx,'🔥 *RETO*\n\n'+pick(DARES));award(id,1,false,ctx.from);return true;
+ case 'pregunta':await send(ctx,'💭 *PREGUNTA PARA EL GRUPO*\n\n'+pick(GROUP_QUESTIONS)+'\n\n¡Que todos participen!');award(id,1,false,ctx.from);return true;
  case 'quien':{
   const m=randomMember(ctx,[id]);if(!m){await send(ctx,'No encontré integrantes para elegir.');return true;}
-  await send(ctx,'🤔 '+pick(GROUP_QUESTIONS)+'\n\n🎲 Elección aleatoria: '+mention(m),[m]);award(id,1,false);return true;
+  await send(ctx,'🤔 '+pick(GROUP_QUESTIONS)+'\n\n🎲 Elección aleatoria: '+mention(m),[m]);award(id,1,false,ctx.from);return true;
  }
  case 'rey':{
   const m=randomMember(ctx,[]);if(!m){await send(ctx,'No encontré integrantes para elegir.');return true;}
@@ -88,7 +88,7 @@ async function handle(ctx){
   if(c==='compatibilidad'){const n=Math.floor(Math.random()*101),bar='❤️'.repeat(Math.round(n/10))+'🖤'.repeat(10-Math.round(n/10));await send(ctx,'💘 *TEST DE COMPATIBILIDAD*\n\n'+mention(id)+' + '+mention(target)+'\n'+bar+'\n💕 Compatibilidad: *'+n+'%*\n_Solo por diversión._',[id,target]);}
   else if(c==='beso')await send(ctx,'😘 '+mention(id)+' le manda un beso virtual a '+mention(target)+' 💋',[id,target]);
   else {const ownKey=ctx.from+'|'+id,otherKey=ctx.from+'|'+target;if(db.couples[ownKey]||db.couples[otherKey]){await send(ctx,'💔 Uno de los dos ya tiene una pareja virtual en este grupo. Usa .divorcio antes de casarte de nuevo.');return true;}db.couples[ownKey]=target;db.couples[otherKey]=id;save();await send(ctx,'💍 *¡BODA VIRTUAL!*\n\n'+mention(id)+' y '+mention(target)+' ahora son pareja de NAUFRA GAMES 💞',[id,target]);}
-  award(id,2,false);return true;
+  award(id,2,false,ctx.from);return true;
  }
  case 'divorcio':{
   const ownKey=ctx.from+'|'+id,partner=db.couples[ownKey],partnerKey=partner?ctx.from+'|'+partner:null;if(!partner){await send(ctx,'💔 No tienes pareja virtual registrada.');return true;}
@@ -120,7 +120,7 @@ async function handle(ctx){
   if(!Number.isSafeInteger(amount)||amount<1||amount>500||!['cara','cruz'].includes(choice)){await send(ctx,'Uso: '+pfx+'ngapuesta 50 cara  (máximo 500 monedas)');return true;}
   const balance=Number(ctx.MoneyOfSender(id)||0);if(balance<amount){await send(ctx,'🪙 No tienes suficientes monedas. Saldo: *'+balance+'*');return true;}
   ctx.delkoin(id,amount);const result=Math.random()<0.5?'cara':'cruz';
-  if(choice===result){ctx.addkoin(id,amount*2);award(id,3,true);await send(ctx,'🪙 *¡GANASTE!* Salió *'+result.toUpperCase()+'*. Premio total: *'+(amount*2)+'* monedas. Ganancia neta: +'+amount+'.');}
+  if(choice===result){ctx.addkoin(id,amount*2);award(id,3,true,ctx.from);await send(ctx,'🪙 *¡GANASTE!* Salió *'+result.toUpperCase()+'*. Premio total: *'+(amount*2)+'* monedas. Ganancia neta: +'+amount+'.');}
   else await send(ctx,'🪙 Salió *'+result.toUpperCase()+'*. Perdiste '+amount+' monedas. ¡Inténtalo de nuevo!');
   return true;
  }
