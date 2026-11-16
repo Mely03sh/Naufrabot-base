@@ -47,8 +47,9 @@ function mention(id){return '@'+String(id||'').split('@')[0];}
 function mentioned(ctx){const x=ctx.info&&ctx.info.message;const c=x&&(x.extendedTextMessage&&x.extendedTextMessage.contextInfo||x.imageMessage&&x.imageMessage.contextInfo||x.videoMessage&&x.videoMessage.contextInfo);return c&&c.mentionedJid&&c.mentionedJid[0]||c&&c.participant||null;}
 function randomMember(ctx,exclude){const a=(ctx.groupMembers||[]).map(x=>x.id||x.phoneNumber).filter(x=>x&&!exclude.includes(x));return a.length?pick(a):null;}
 function send(ctx,t,mentions){return ctx.Naufra.sendMessage(ctx.from,{text:t,mentions:mentions||[]},{quoted:ctx.info});}
-function pending(ctx){const x=db.pending[ctx.from];if(!x||x.expiresAt<Date.now()){if(x){delete db.pending[ctx.from];save();}return null;}return x;}
-function setPending(chat,x){db.pending[chat]=Object.assign({},x,{expiresAt:Date.now()+90000});save();}
+function pending(ctx,type){const key=ctx.from+'|'+type,x=db.pending[key];if(!x||x.expiresAt<Date.now()){if(x){delete db.pending[key];save();}return null;}return x;}
+function setPending(chat,type,x){db.pending[chat+'|'+type]=Object.assign({},x,{expiresAt:Date.now()+90000});}
+function clearPending(chat,type){delete db.pending[chat+'|'+type];save();}
 async function handle(ctx){
  const c=ctx.comando,pfx=ctx.prefixo||'.',q=String(ctx.q||'').trim(),id=ctx.sender;
  const commands=['ngames','trivia','acertijo','matematicas','responder','verdad','reto','pregunta','quien','rey','compatibilidad','beso','casarv7','divorcio','duelo','aceptarduelo','ngrank','ngperfil','ngapuesta'];
@@ -66,18 +67,18 @@ async function handle(ctx){
  case 'ngames':
   await send(ctx,'🎮 *NAUFRA GAMES V7*\n━━━━━━━━━━━━━━━━\n🧠 *Habilidad*\n• '+pfx+'trivia\n• '+pfx+'acertijo\n• '+pfx+'matematicas\n• '+pfx+'responder respuesta\n\n🎉 *Diversión*\n• '+pfx+'verdad\n• '+pfx+'reto\n• '+pfx+'pregunta\n• '+pfx+'quien\n• '+pfx+'rey\n\n💘 *Social*\n• '+pfx+'compatibilidad @persona\n• '+pfx+'beso @persona\n• '+pfx+'casarv7 @persona\n• '+pfx+'divorcio\n\n⚔️ *Competencia*\n• '+pfx+'duelo @persona\n• '+pfx+'aceptarduelo\n• '+pfx+'ngrank [semana|mes|todo]\n• '+pfx+'ngperfil\n\n🪙 *Monedas*\n• '+pfx+'ngapuesta cantidad cara|cruz\n\n🏅 Juegos sociales gratuitos; las apuestas usan monedas virtuales.');return true;
  case 'trivia':case 'acertijo':case 'matematicas':{
-  if(pending(ctx)){await send(ctx,'⏳ Ya hay un reto activo. Responde con '+pfx+'responder tu respuesta.');return true;}
+  if(pending(ctx,'quiz')){await send(ctx,'⏳ Ya hay un reto de preguntas activo. Responde con '+pfx+'responder tu respuesta.');return true;}
   let item,question,answer;
   if(c==='trivia'){item=pick(QUESTIONS);question=item.q;answer=item.a;}
   else if(c==='acertijo'){item=pick(RIDDLES);question=item.q;answer=item.a;}
   else {const a=2+Math.floor(Math.random()*19),b=2+Math.floor(Math.random()*11),op=pick(['+','-','×']);question='¿Cuánto es *'+a+' '+op+' '+b+'*?';answer=[String(op==='+'?a+b:op==='-'?a-b:a*b)];}
-  setPending(ctx.from,{type:c,answer:answer,question:question});
+  setPending(ctx.from,'quiz',{type:c,answer:answer,question:question});
   await send(ctx,'🎯 *'+c.toUpperCase()+' — NAUFRA GAMES*\n\n'+question+'\n\n⏱️ Tienes 90 segundos.\n✍️ Responde: *'+pfx+'responder tu respuesta*\n🏆 Premio: 5 puntos + 2 XP.');return true;
  }
  case 'responder':{
   if(!q){await send(ctx,'Uso: '+pfx+'responder tu respuesta');return true;}
-  const a=pending(ctx);if(!a||!a.answer){await send(ctx,'❌ No hay reto activo o el tiempo terminó.');return true;}
-  if(a.answer.map(clean).includes(clean(q))){delete db.pending[ctx.from];award(id,5,true,ctx.from);if(ctx.addXp)ctx.addXp(id,2);await send(ctx,'🎉 ¡Correcto, '+mention(id)+'!\n🏆 Ganaste 5 puntos y 2 XP.\n🧠 Respuesta: *'+a.answer[0]+'*',[id]);}
+  const a=pending(ctx,'quiz');if(!a||!a.answer){await send(ctx,'❌ No hay reto activo o el tiempo terminó.');return true;}
+  if(a.answer.map(clean).includes(clean(q))){clearPending(ctx.from,'quiz');award(id,5,true,ctx.from);if(ctx.addXp)ctx.addXp(id,2);await send(ctx,'🎉 ¡Correcto, '+mention(id)+'!\n🏆 Ganaste 5 puntos y 2 XP.\n🧠 Respuesta: *'+a.answer[0]+'*',[id]);}
   else await send(ctx,'❌ Esa no es la respuesta. ¡Inténtalo otra vez!');return true;
  }
  case 'verdad':await send(ctx,'💬 *VERDAD*\n\n'+pick(TRUTHS));award(id,1,false,ctx.from);return true;
@@ -104,13 +105,13 @@ async function handle(ctx){
  }
  case 'duelo':{
   const target=mentioned(ctx);if(!target||target===id){await send(ctx,'Uso: '+pfx+'duelo @oponente');return true;}
-  if(pending(ctx)){await send(ctx,'⚔️ Ya hay un reto activo en este grupo.');return true;}
-  setPending(ctx.from,{type:'duel',challenger:id,target:target});await send(ctx,'⚔️ '+mention(id)+' reta a '+mention(target)+'.\n'+mention(target)+', acepta con *'+pfx+'aceptarduelo*. Tienen 90 segundos.',[id,target]);return true;
+  if(pending(ctx,'duel')){await send(ctx,'⚔️ Ya hay un duelo pendiente en este grupo.');return true;}
+  setPending(ctx.from,'duel',{type:'duel',challenger:id,target:target});await send(ctx,'⚔️ '+mention(id)+' reta a '+mention(target)+'.\n'+mention(target)+', acepta con *'+pfx+'aceptarduelo*. Tienen 90 segundos.',[id,target]);return true;
  }
  case 'aceptarduelo':{
-  const a=pending(ctx);if(!a||a.type!=='duel'){await send(ctx,'No hay duelo pendiente.');return true;}
+  const a=pending(ctx,'duel');if(!a||a.type!=='duel'){await send(ctx,'No hay duelo pendiente.');return true;}
   if(id!==a.target){await send(ctx,'Solo la persona retada puede aceptar.');return true;}
-  delete db.pending[ctx.from];const winner=Math.random()<0.5?a.challenger:a.target,loser=winner===a.challenger?a.target:a.challenger;award(winner,10,true,ctx.from);award(loser,2,false,ctx.from);
+  clearPending(ctx.from,'duel');const winner=Math.random()<0.5?a.challenger:a.target,loser=winner===a.challenger?a.target:a.challenger;award(winner,10,true,ctx.from);award(loser,2,false,ctx.from);
   await send(ctx,'🏆 *RESULTADO DEL DUELO*\n⚔️ '+mention(a.challenger)+' vs '+mention(a.target)+'\n👑 Ganador: '+mention(winner)+'\n🎖️ +10 puntos al ganador y +2 al otro participante.',[a.challenger,a.target]);return true;
  }
  case 'ngrank':{
