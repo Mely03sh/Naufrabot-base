@@ -893,6 +893,8 @@ case 'lista': {
 
   const lineas = [
     `        *${formato}*`,
+    `📅 *FECHA:* ${fechaPublicacion}`,
+    '',
     '╭───────〔 🕒 HORARIOS 〕───────',
     ...lineasHorarios,
     '╰────────────────────────────',
@@ -904,7 +906,7 @@ case 'lista': {
       estilo.borde,
       `       *${estilo.icono} PARTICIPANTES (${cantidadDinamica})*`,
       estilo.borde,
-      ...Array.from({ length: cantidadDinamica }, (_, i) => `${String(i + 1).padStart(2, '0')} │ __________________`),
+      ...Array.from({ length: cantidadDinamica }, (_, i) => `${String(i + 1).padStart(2, '0')} │`),
     )
   } else {
     const config = configuraciones[clave]
@@ -916,7 +918,7 @@ case 'lista': {
         estilo.borde,
       )
       for (let jugador = 0; jugador < config.porEquipo; jugador++) {
-        lineas.push(`${String(numero++).padStart(2, '0')} │ __________________`)
+        lineas.push(`${String(numero++).padStart(2, '0')} │`)
       }
       lineas.push('')
     }
@@ -926,13 +928,12 @@ case 'lista': {
       estilo.borde,
     )
     for (let suplente = 0; suplente < config.suplentes; suplente++) {
-      lineas.push(`${String(numero++).padStart(2, '0')} │ __________________`)
+      lineas.push(`${String(numero++).padStart(2, '0')} │`)
     }
   }
 
   lineas.push(
     '',
-    `📅 *FECHA DE PUBLICACIÓN:* ${fechaPublicacion}`,
     `👑 *ORGANIZADO POR:* ${organizador}`,
   )
 
