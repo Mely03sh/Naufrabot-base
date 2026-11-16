@@ -2,7 +2,7 @@ name: NAUFRA GAMES V7 checks
 
 on:
   push:
-    branches: [feature/naufra-games-v7, feature/naufra-games-expansion, feature/naufra-targeted-advice-compliments, feature/naufra-100-consejos-piropos]
+    branches: [feature/naufra-games-v7, feature/naufra-games-expansion, feature/naufra-targeted-advice-compliments, feature/naufra-100-consejos-piropos, fix/persistent-user-registration]
   pull_request:
     branches: [main]
 
@@ -20,9 +20,12 @@ jobs:
         run: |
           node --check index.js
           node --check Games/Js/naufraGames.js
+          node --check settings/Grupo/Js/reg.js
       - name: Validate persistent game data
         run: node -e "JSON.parse(require('fs').readFileSync('Games/Json/naufra_games.json','utf8')); console.log('JSON válido')"
       - name: Load game engine
         run: node -e "const g=require('./Games/Js/naufraGames.js'); if(typeof g.handle!=='function') process.exit(1); console.log('Motor V7 cargado')"
       - name: Run functional tests
-        run: node --test Games/Js/naufraGames.test.js
+        run: |
+          node --test Games/Js/naufraGames.test.js
+          node --test settings/Grupo/Js/reg.test.js
