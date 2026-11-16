@@ -114,6 +114,69 @@ test('betting validates amount and choice before changing balance', async () => 
   assert.match(ctx.sent[0][1].text, /máximo 500 monedas/);
 });
 
+
+test('tournament escrows prize, records group participation and pays winner', async () => {
+  let balance = 500, paid = 0;
+  const creator = makeCtx({
+    comando: 'ntorneo', args: ['abrir', '100'], from: 'tournament@g.us',
+    MoneyOfSender: () => balance, delkoin: (_id, amount) => { balance -= amount; },
+    addkoin: (_id, amount) => { paid += amount; }
+  });
+  await games.handle(creator);
+  assert.equal(balance, 400);
+
+  const joiner = makeCtx({ comando: 'ntorneo', args: ['entrar'], from: 'tournament@g.us', sender: '222@s.whatsapp.net' });
+  await games.handle(joiner);
+  const score = makeCtx({ comando: 'verdad', from: 'tournament@g.us', sender: '222@s.whatsapp.net' });
+  await games.handle(score);
+
+  const close = makeCtx({
+    comando: 'ntorneo', args: ['cerrar'], from: 'tournament@g.us',
+    MoneyOfSender: () => balance, addkoin: (_id, amount) => { paid += amount; }
+  });
+  await games.handle(close);
+  assert.equal(paid, 100);
+  assert.match(close.sent[0][1].text, /TORNEO FINALIZADO/);
+});
+
+test('battle requires acceptance and both secret moves before resolving', async () => {
+  const group = 'battle-rps@g.us';
+  const challenge = makeCtx({
+    comando: 'batalla', from: group,
+    info: { message: { extendedTextMessage: { contextInfo: { mentionedJid: ['222@s.whatsapp.net'] } } } }
+  });
+  await games.handle(challenge);
+
+  const accept = makeCtx({ comando: 'aceptarbatalla', from: group, sender: '222@s.whatsapp.net' });
+  await games.handle(accept);
+
+  const first = makeCtx({ comando: 'jugada', args: ['piedra'], from: group });
+  await games.handle(first);
+  assert.match(first.sent[0][1].text, /Esperando a tu rival/);
+
+  const second = makeCtx({ comando: 'jugada', args: ['tijera'], from: group, sender: '222@s.whatsapp.net' });
+  await games.handle(second);
+  assert.match(second.sent[0][1].text, /RESULTADO DE BATALLA/);
+});
+
+test('roulette rejects invalid stakes without charging coins', async () => {
+  let charged = 0;
+  const ctx = makeCtx({
+    comando: 'ngruleta', args: ['1'], MoneyOfSender: () => 100,
+    delkoin: (_id, amount) => { charged += amount; }
+  });
+  await games.handle(ctx);
+  assert.equal(charged, 0);
+  assert.match(ctx.sent[0][1].text, /mínimo 5/);
+});
+
+test('profile exposes level and badge progression', async () => {
+  const ctx = makeCtx({ comando: 'ngperfil', from: 'profile-level@g.us' });
+  await games.handle(ctx);
+  assert.match(ctx.sent[0][1].text, /Nivel:/);
+  assert.match(ctx.sent[0][1].text, /Novato/);
+});
+
 test.after(() => {
   fs.rmSync(tempDir, { recursive: true, force: true });
 });
