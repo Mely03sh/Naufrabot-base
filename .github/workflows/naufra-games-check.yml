@@ -1,0 +1,26 @@
+name: NAUFRA GAMES V7 checks
+
+on:
+  push:
+    branches: [feature/naufra-games-v7]
+  pull_request:
+    branches: [main]
+
+jobs:
+  syntax-and-load:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Check JavaScript syntax
+        run: |
+          node --check index.js
+          node --check Games/Js/naufraGames.js
+      - name: Validate persistent game data
+        run: node -e "JSON.parse(require('fs').readFileSync('Games/Json/naufra_games.json','utf8')); console.log('JSON válido')"
+      - name: Load game engine
+        run: node -e "const g=require('./Games/Js/naufraGames.js'); if(typeof g.handle!=='function') process.exit(1); console.log('Motor V7 cargado')"
