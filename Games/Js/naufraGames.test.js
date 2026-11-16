@@ -207,7 +207,7 @@ test('targeted advice and compliment require a tagged or replied-to person', asy
   await games.handle(advice);
   assert.match(advice.sent[0][1].text, /etiqueta a la persona o responde/);
 
-  const compliment = makeCtx({ comando: 'ngpiropo' });
+  const compliment = makeCtx({ comando: 'ngpiropo', sender: '444@s.whatsapp.net' });
   await games.handle(compliment);
   assert.match(compliment.sent[0][1].text, /etiqueta a la persona o responde/);
 });
