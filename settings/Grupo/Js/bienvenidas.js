@@ -15,7 +15,6 @@
 //   {fecha}       -> fecha actual
 // ══════════════════════════════════════════════════════════
 
-const fs = require('fs')
 const { readJson, writeJson } = require('../../persistentJson.js')
 const moment = require('moment-timezone')
 
