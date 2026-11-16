@@ -1,34 +1,34 @@
-const fs = require('fs')
-const JsonMining = './Games/Json/mining.json';
-const GameMinar = JSON.parse(fs.readFileSync(JsonMining))
-const JsonCasino =  './Games/Json/casino.json';
-const JsonPescar =  './Games/Json/pescar.json';
-const GameCasino = JSON.parse(fs.readFileSync(JsonCasino))
-const GamePescar = JSON.parse(fs.readFileSync(JsonPescar))
+const { readJson, writeJson } = require('../../settings/persistentJson.js')
+const JsonMining = 'Games/Json/mining.json';
+const GameMinar = readJson(JsonMining, []);
+const JsonCasino = 'Games/Json/casino.json';
+const JsonPescar = 'Games/Json/pescar.json';
+const GameCasino = readJson(JsonCasino, []);
+const GamePescar = readJson(JsonPescar, []);
 //dayli
 
 //tragacoins
-const JsonTraga = './Games/Json/tragaperras.json';
-const GameTraga = JSON.parse(fs.readFileSync(JsonTraga));
+const JsonTraga = 'Games/Json/tragaperras.json';
+const GameTraga = readJson(JsonTraga, []);
 
-const JsonDayli =  './Games/Json/dayli.json';
-const GameDayli = JSON.parse(fs.readFileSync(JsonDayli))
+const JsonDayli = 'Games/Json/dayli.json';
+const GameDayli = readJson(JsonDayli, []);
 
 // ruleta
-const JsonRuleta =  './Games/Json/ruleta.json';
-const GameRuleta = JSON.parse(fs.readFileSync(JsonRuleta))
+const JsonRuleta = 'Games/Json/ruleta.json';
+const GameRuleta = readJson(JsonRuleta, []);
 
 // Eve
-const JsonEve =  './Games/Json/eve.json';
-const GameEve = JSON.parse(fs.readFileSync(JsonEve))
+const JsonEve = 'Games/Json/eve.json';
+const GameEve = readJson(JsonEve, []);
 
 // Emoji+
-const JsonEmoji =  './Games/Json/emoji.json';
-const GameEmoji = JSON.parse(fs.readFileSync(JsonEmoji))
+const JsonEmoji = 'Games/Json/emoji.json';
+const GameEmoji = readJson(JsonEmoji, []);
 
 // Attp
-const JsonAttp =  './Games/Json/attp.json';
-const GameAttp = JSON.parse(fs.readFileSync(JsonAttp))
+const JsonAttp = 'Games/Json/attp.json';
+const GameAttp = readJson(JsonAttp, []);
 
 // dayli
 
@@ -38,7 +38,7 @@ user : sender,
 time : Date.now() + time
 }
 GameDayli.push(obj)
-fs.writeFileSync(JsonDayli , JSON.stringify(GameDayli, null , 2)+'\n')
+writeJson(JsonDayli, GameDayli);
 }
 
 
@@ -50,7 +50,7 @@ user : sender,
 time : Date.now() + time
 }
 GameMinar.push(obj)
-fs.writeFileSync(JsonMining , JSON.stringify(GameMinar, null , 2)+'\n')
+writeJson(JsonMining, GameMinar);
 }
 // Ruleta
 const addRuleta = (sender , time) => {
@@ -59,7 +59,7 @@ user : sender,
 time : Date.now() + time
 }
 GameRuleta.push(obj)
-fs.writeFileSync(JsonRuleta , JSON.stringify(GameRuleta, null , 2)+'\n')
+writeJson(JsonRuleta, GameRuleta);
 }
 
 // Eve
@@ -69,7 +69,7 @@ user : sender,
 time : Date.now() + time
 }
 GameEve.push(obj)
-fs.writeFileSync(JsonEve , JSON.stringify(GameEve, null , 2)+'\n')
+writeJson(JsonEve, GameEve);
 }
 
 // Emoji +
@@ -79,7 +79,7 @@ user : sender,
 time : Date.now() + time
 }
 GameEmoji.push(obj)
-fs.writeFileSync(JsonEmoji , JSON.stringify(GameEmoji, null , 2)+'\n')
+writeJson(JsonEmoji, GameEmoji);
 }
 
 // Attp
@@ -89,7 +89,7 @@ user : sender,
 time : Date.now() + time
 }
 GameAttp.push(obj)
-fs.writeFileSync(JsonAttp , JSON.stringify(GameAttp, null , 2)+'\n')
+writeJson(JsonAttp, GameAttp);
 }
 
 //
@@ -99,7 +99,7 @@ user : sender,
 time : Date.now() + time
 }
 GameCasino.push(obj)
-fs.writeFileSync(JsonCasino , JSON.stringify(GameCasino, null , 2)+'\n')
+writeJson(JsonCasino, GameCasino);
 }
 
 
@@ -110,7 +110,7 @@ const addPescar = (sender , time) => {
     time: Date.now() + time
   };
   GamePescar.push(obj);
-  fs.writeFileSync(JsonPescar, JSON.stringify(GamePescar, null , 2) + '\n');
+  writeJson(JsonPescar, GamePescar);
 };
 
 
@@ -140,7 +140,7 @@ const addClaimTraga = (sender, time) => {
         GameTraga.push({ user: sender, time: nuevoTiempo });
     }
 
-    fs.writeFileSync(JsonTraga, JSON.stringify(GameTraga, null, 2) + '\n');
+    writeJson(JsonTraga, GameTraga);
 };
 
 
@@ -296,7 +296,7 @@ const ahora = Date.now()
 GameRuleta.forEach((item , indice) => {
 if(ahora >= item.time ) {
 GameRuleta.splice(indice,1)
-fs.writeFileSync(JsonRuleta, JSON.stringify(GameRuleta,null, 2)+'\n')
+writeJson(JsonRuleta, GameRuleta);
 }
 });
 },1* 60 * 1000) // verifica cada 5 min
@@ -312,7 +312,7 @@ const expiredPescar = () => {
     if (activos.length !== GamePescar.length) {
       GamePescar.length = 0;
       GamePescar.push(...activos);
-      fs.writeFileSync(JsonPescar, JSON.stringify(GamePescar, null, 2) + '\n');
+      writeJson(JsonPescar, GamePescar);
     }
 
   },1 * 60 * 1000); // cada 1 minuto
@@ -326,7 +326,7 @@ const ahora = Date.now()
 GameEve.forEach((item , indice) => {
 if(ahora >= item.time ) {
 GameEve.splice(indice,1)
-fs.writeFileSync(JsonEve, JSON.stringify(GameEve,null, 2)+'\n')
+writeJson(JsonEve, GameEve);
 }
 });
 },1* 60 * 1000) // verifica cada 5 min
@@ -338,7 +338,7 @@ const ahora = Date.now()
 GameDayli.forEach((item , indice) => {
 if(ahora >= item.time ) {
 GameDayli.splice(indice,1)
-fs.writeFileSync(JsonDayli, JSON.stringify(GameDayli,null, 2)+'\n')
+writeJson(JsonDayli, GameDayli);
 }
 });
 },1* 60 * 1000) // verifica cada 5 min
@@ -350,7 +350,7 @@ const ahora = Date.now()
 GameEmoji.forEach((item , indice) => {
 if(ahora >= item.time ) {
 GameEmoji.splice(indice,1)
-fs.writeFileSync(JsonEmoji, JSON.stringify(GameEmoji,null, 2)+'\n')
+writeJson(JsonEmoji, GameEmoji);
 }
 });
 },1* 60 * 1000) // verifica cada 5 min
@@ -363,7 +363,7 @@ const ahora = Date.now()
 GameAttp.forEach((item , indice) => {
 if(ahora >= item.time ) {
 GameAttp.splice(indice,1)
-fs.writeFileSync(JsonAttp, JSON.stringify(GameAttp,null, 2)+'\n')
+writeJson(JsonAttp, GameAttp);
 }
 });
 },1* 60 * 1000) // verifica cada 5 min
@@ -375,7 +375,7 @@ const ahora = Date.now()
 GameMinar.forEach((item , indice) => {
 if(ahora >= item.time ) {
 GameMinar.splice(indice,1)
-fs.writeFileSync(JsonMining, JSON.stringify(GameMinar,null, 2)+'\n')
+writeJson(JsonMining, GameMinar);
 }
 });
 },1* 60 * 1000) // verifica cada 5 min
@@ -387,7 +387,7 @@ const ahora = Date.now()
 GameCasino.forEach((item , indice) => {
 if(ahora >= item.time ) {
 GameCasino.splice(indice,1)
-fs.writeFileSync(JsonCasino, JSON.stringify(GameCasino,null, 2)+'\n')
+writeJson(JsonCasino, GameCasino);
 }
 });
 },1* 60 * 1000) // verifica cada 5 min
