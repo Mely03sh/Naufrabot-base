@@ -206,8 +206,18 @@ return `
 > ➥Desafía a otro integrante
 *➢ngperfil / ngrank*
 > ➥Puntos, victorias y rankings
-*➢ngapuesta*
-> ➥Apuesta monedas virtuales a cara o cruz
+*➢ngapuesta / ngr uleta*
+> ➥Apuesta monedas virtuales y juega a la ruleta
+*➢ntorneo abrir 100 / entrar / cerrar*
+> ➥Crea torneos grupales con premios
+*➢batalla @persona / aceptarbatalla*
+> ➥Desafíos de piedra, papel o tijera
+*➢jugada piedra|papel|tijera*
+> ➥Envía tu jugada secreta
+*➢ngpremios*
+> ➥Reclama premios semanales del top 3
+*➢ngconfesion / ngpiropo / ngsuerte*
+> ➥Nuevos juegos sociales
 
 ╭                    
    ❍ 𝐌𝐄𝐍𝐔 - 𝐄𝐂𝐎𝐍𝐎𝐌𝐈𝐀  ❐       
