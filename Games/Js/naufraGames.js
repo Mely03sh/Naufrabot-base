@@ -123,7 +123,7 @@ async function handle(ctx){
   await send(ctx,'🏆 *RANKING '+title+' NAUFRA GAMES*\n\n'+rows.map((x,i)=>(i+1)+'. '+mention(x.user)+' — *'+x.points+' pts*').join('\n'),rows.map(x=>x.user));return true;
  }
  case 'ngperfil':{
-  const p=player(id,ctx.from);await send(ctx,'🎮 *TU PERFIL NAUFRA GAMES*\n\n👤 '+(ctx.pushname||ctx.senderNumber||'Jugador')+'\n🏆 Puntos: *'+p.points+'*\n🥇 Victorias: *'+p.wins+'*\n🎲 Participaciones: *'+p.played+'*\n\nUsa '+pfx+'ngrank para ver el ranking.');return true;
+  const p=player(id,ctx.from),rank=levelFor(p.points);await send(ctx,'🎮 *TU PERFIL NAUFRA GAMES*\n\n👤 '+(ctx.pushname||ctx.senderNumber||'Jugador')+'\n🏅 Nivel: *'+rank.level+' — '+rank.badge+'*\n🏆 Puntos: *'+p.points+'*\n🥇 Victorias: *'+p.wins+'*\n🎲 Participaciones: *'+p.played+'*\n\nUsa '+pfx+'ngrank para ver el ranking.');return true;
  }
  case 'ngruleta':{
   const amount=Number((ctx.args||[])[0]);
