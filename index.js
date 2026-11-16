@@ -867,19 +867,14 @@ case 'lista': {
     const fechaTexto = fechaReferencia === fechaEvento ? '' : ` (${fechaReferencia})`
 
     if (!horarios.has(claveHorario)) {
-      const [horaNumero, minutoNumero] = horaLocal.split(':').map(Number)
-      const esPM = horaLocal.endsWith('PM')
-      const minutosDelDia = (horaNumero % 12 + (esPM ? 12 : 0)) * 60 + minutoNumero
+      const minutosDelDia = local.hour() * 60 + local.minute()
       horarios.set(claveHorario, { hora: `${horaLocal}${fechaTexto}`, minutosDelDia, paises: [] })
     }
     horarios.get(claveHorario).paises.push(etiqueta)
   }
 
   const lineasHorarios = [...horarios.values()]
-    .sort((a, b) => {
-      const parse = value => moment(value.hora.replace(/ \(.+\)$/, ''), 'h:mm A')
-      return parse(a.hora).valueOf() - parse(b.hora).valueOf()
-    })
+    .sort((a, b) => a.minutosDelDia - b.minutosDelDia)
     .map(grupo => `│ ${grupo.hora}: ${grupo.paises.join(' · ')}`)
 
   const adminNombre = String(info?.pushName || pushname || '').replace(/\s+/g, ' ').trim()
