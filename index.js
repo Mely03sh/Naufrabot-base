@@ -72,6 +72,7 @@ const {getExtension, getRandom } =require('./fuction/settings/fuctions.js')
  //Stickers
 const { sendVideoAsSticker, sendImageAsSticker } = require('./fuction/sticker/rename.js');
 const { sendVideoAsSticker2, sendImageAsSticker2 } = require('./fuction/sticker/rename2.js');
+const { writeExif2 } = require('./fuction/sticker/exif2.js');
  
  //Grupos js
 const { MoneyOfSender, addkoin, delkoin, AddReg, checkOfReg , addLevel, addXp,levelOfsender , xpOfsender ,checkOfRegM ,addkoinM , delkoinM , MoneyOfM,Rxp, addRxp ,addRep , delRep , repUser  } = require('./settings/Grupo/Js/reg.js')
@@ -1903,6 +1904,47 @@ break
 
 
 // STICKERS 
+
+// 🥷 ROBAR STICKER: responder al sticker original con .robar
+case 'robar': {
+  const contextoRobar = info.message?.extendedTextMessage?.contextInfo;
+  const stickerRobar = contextoRobar?.quotedMessage?.stickerMessage;
+  if (!stickerRobar) {
+    return enviar('🥷 *ROBAR STICKER*\\n\\nResponde directamente al sticker que quieras guardar y escribe *.robar*.');
+  }
+  try {
+    const autorJid = contextoRobar.participant || '';
+    const autorGrupo = groupMembers.find(p =>
+      [p.id, p.phoneNumber, p.lid].filter(Boolean).some(id =>
+        String(id).split(':')[0] === String(autorJid).split(':')[0] ||
+        String(id).split('@')[0] === String(autorJid).split('@')[0]
+      )
+    );
+    const contacto = Naufra.contacts?.[autorJid] || Naufra.store?.contacts?.[autorJid] || {};
+    const nombreAutor = contacto.name || contacto.notify || contacto.verifiedName ||
+      autorGrupo?.notify || autorGrupo?.name || autorGrupo?.verifiedName ||
+      (autorJid ? autorJid.split('@')[0] : 'Integrante del grupo');
+
+    const bufferSticker = await getFileBuffer(stickerRobar, 'sticker');
+    if (!bufferSticker?.length) throw new Error('No se pudo descargar el sticker original.');
+
+    const archivoExif = await writeExif2(
+      { mimetype: 'image/webp', data: bufferSticker },
+      {
+        packname: '🥷 Stickers robados | NaufraBot',
+        author: nombreAutor
+      }
+    );
+    const stickerFinal = fs.readFileSync(archivoExif);
+    await Naufra.sendMessage(from, { sticker: stickerFinal, mimetype: 'image/webp' }, { quoted: info });
+    try { fs.unlinkSync(archivoExif); } catch (_) {}
+  } catch (errorRobar) {
+    console.error('Error en .robar:', errorRobar);
+    return enviar('❌ No pude procesar ese sticker. Intenta con otro sticker o verifica que siga disponible.');
+  }
+  break;
+}
+
 
 // ══════════════════════════════════════════════════════════
 // 📦 COMANDOS: STICKERS
