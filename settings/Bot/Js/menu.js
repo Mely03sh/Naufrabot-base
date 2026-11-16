@@ -216,8 +216,12 @@ return `
 > ➥Envía tu jugada secreta
 *➢ngpremios*
 > ➥Reclama premios semanales del top 3
-*➢ngconfesion / ngpiropo / ngsuerte*
-> ➥Nuevos juegos sociales
+*➢ngconsejo @persona*
+> ➥Envía un consejo y etiqueta a quien quieras
+*➢ngpiropo @persona*
+> ➥Dedica un piropo mencionando a esa persona
+*➢ngconfesion / ngsuerte*
+> ➥Más juegos sociales
 
 ╭                    
    ❍ 𝐌𝐄𝐍𝐔 - 𝐄𝐂𝐎𝐍𝐎𝐌𝐈𝐀  ❐       
