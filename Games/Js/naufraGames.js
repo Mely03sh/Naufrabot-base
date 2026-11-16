@@ -38,8 +38,8 @@ function periods(){
  const first=new Date(y,0,1),w=Math.ceil((((d-first)/86400000)+first.getDay()+1)/7);
  return {month:m,week:y+'-W'+String(w).padStart(2,'0')};
 }
-function player(id){if(!db.players[id])db.players[id]={points:0,wins:0,played:0,weekly:{},monthly:{}};const p=db.players[id];p.weekly=p.weekly||{};p.monthly=p.monthly||{};return p;}
-function award(id,points,win){const p=player(id),k=periods();p.points+=points;p.played++;if(win)p.wins++;p.weekly[k.week]=(p.weekly[k.week]||0)+points;p.monthly[k.month]=(p.monthly[k.month]||0)+points;save();}
+function player(id,chat){const key=chat+'|'+id;if(!db.players[key])db.players[key]={userId:id,groupId:chat,points:0,wins:0,played:0,weekly:{},monthly:{}};const p=db.players[key];p.userId=id;p.groupId=chat;p.weekly=p.weekly||{};p.monthly=p.monthly||{};return p;}
+function award(id,points,win,chat){const p=player(id,chat),k=periods();p.points+=points;p.played++;if(win)p.wins++;p.weekly[k.week]=(p.weekly[k.week]||0)+points;p.monthly[k.month]=(p.monthly[k.month]||0)+points;save();}
 function clean(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim().replace(/[¿?¡!.,]/g,'');}
 function pick(a){return a[Math.floor(Math.random()*a.length)];}
 function mention(id){return '@'+String(id||'').split('@')[0];}
@@ -69,10 +69,10 @@ async function handle(ctx){
  case 'responder':{
   if(!q){await send(ctx,'Uso: '+pfx+'responder tu respuesta');return true;}
   const a=pending(ctx);if(!a||!a.answer){await send(ctx,'❌ No hay reto activo o el tiempo terminó.');return true;}
-  if(a.answer.map(clean).includes(clean(q))){delete db.pending[ctx.from];award(id,5,true);if(ctx.addXp)ctx.addXp(id,2);await send(ctx,'🎉 ¡Correcto, '+mention(id)+'!\n🏆 Ganaste 5 puntos y 2 XP.\n🧠 Respuesta: *'+a.answer[0]+'*',[id]);}
+  if(a.answer.map(clean).includes(clean(q))){delete db.pending[ctx.from];award(id,5,true,ctx.from);if(ctx.addXp)ctx.addXp(id,2);await send(ctx,'🎉 ¡Correcto, '+mention(id)+'!\n🏆 Ganaste 5 puntos y 2 XP.\n🧠 Respuesta: *'+a.answer[0]+'*',[id]);}
   else await send(ctx,'❌ Esa no es la respuesta. ¡Inténtalo otra vez!');return true;
  }
- case 'verdad':await send(ctx,'💬 *VERDAD*\n\n'+pick(TRUTHS));award(id,1,false);return true;
+ case 'verdad':await send(ctx,'💬 *VERDAD*\n\n'+pick(TRUTHS));award(id,1,false,ctx.from);return true;
  case 'reto':await send(ctx,'🔥 *RETO*\n\n'+pick(DARES));award(id,1,false);return true;
  case 'pregunta':await send(ctx,'💭 *PREGUNTA PARA EL GRUPO*\n\n'+pick(GROUP_QUESTIONS)+'\n\n¡Que todos participen!');award(id,1,false);return true;
  case 'quien':{
@@ -81,18 +81,18 @@ async function handle(ctx){
  }
  case 'rey':{
   const m=randomMember(ctx,[]);if(!m){await send(ctx,'No encontré integrantes para elegir.');return true;}
-  await send(ctx,'👑 *LA CORONA DEL GRUPO ES PARA*\n\n'+mention(m)+' 👑',[m]);award(id,2,false);return true;
+  await send(ctx,'👑 *LA CORONA DEL GRUPO ES PARA*\n\n'+mention(m)+' 👑',[m]);award(id,2,false,ctx.from);return true;
  }
  case 'compatibilidad':case 'beso':case 'casarv7':{
   let target=mentioned(ctx)||randomMember(ctx,[id]);if(!target||target===id){await send(ctx,'Uso: '+pfx+c+' @persona');return true;}
   if(c==='compatibilidad'){const n=Math.floor(Math.random()*101),bar='❤️'.repeat(Math.round(n/10))+'🖤'.repeat(10-Math.round(n/10));await send(ctx,'💘 *TEST DE COMPATIBILIDAD*\n\n'+mention(id)+' + '+mention(target)+'\n'+bar+'\n💕 Compatibilidad: *'+n+'%*\n_Solo por diversión._',[id,target]);}
   else if(c==='beso')await send(ctx,'😘 '+mention(id)+' le manda un beso virtual a '+mention(target)+' 💋',[id,target]);
-  else {db.couples[id]=target;db.couples[target]=id;save();await send(ctx,'💍 *¡BODA VIRTUAL!*\n\n'+mention(id)+' y '+mention(target)+' ahora son pareja de NAUFRA GAMES 💞',[id,target]);}
+  else {const ownKey=ctx.from+'|'+id,otherKey=ctx.from+'|'+target;if(db.couples[ownKey]||db.couples[otherKey]){await send(ctx,'💔 Uno de los dos ya tiene una pareja virtual en este grupo. Usa .divorcio antes de casarte de nuevo.');return true;}db.couples[ownKey]=target;db.couples[otherKey]=id;save();await send(ctx,'💍 *¡BODA VIRTUAL!*\n\n'+mention(id)+' y '+mention(target)+' ahora son pareja de NAUFRA GAMES 💞',[id,target]);}
   award(id,2,false);return true;
  }
  case 'divorcio':{
-  const partner=db.couples[id];if(!partner){await send(ctx,'💔 No tienes pareja virtual registrada.');return true;}
-  delete db.couples[id];if(db.couples[partner]===id)delete db.couples[partner];save();await send(ctx,'💔 '+mention(id)+' y '+mention(partner)+' terminaron su relación virtual.',[id,partner]);return true;
+  const ownKey=ctx.from+'|'+id,partner=db.couples[ownKey],partnerKey=partner?ctx.from+'|'+partner:null;if(!partner){await send(ctx,'💔 No tienes pareja virtual registrada.');return true;}
+  delete db.couples[ownKey];if(db.couples[partnerKey]===id)delete db.couples[partnerKey];save();await send(ctx,'💔 '+mention(id)+' y '+mention(partner)+' terminaron su relación virtual.',[id,partner]);return true;
  }
  case 'duelo':{
   const target=mentioned(ctx);if(!target||target===id){await send(ctx,'Uso: '+pfx+'duelo @oponente');return true;}
@@ -102,18 +102,18 @@ async function handle(ctx){
  case 'aceptarduelo':{
   const a=pending(ctx);if(!a||a.type!=='duel'){await send(ctx,'No hay duelo pendiente.');return true;}
   if(id!==a.target){await send(ctx,'Solo la persona retada puede aceptar.');return true;}
-  delete db.pending[ctx.from];const winner=Math.random()<0.5?a.challenger:a.target,loser=winner===a.challenger?a.target:a.challenger;award(winner,10,true);award(loser,2,false);
+  delete db.pending[ctx.from];const winner=Math.random()<0.5?a.challenger:a.target,loser=winner===a.challenger?a.target:a.challenger;award(winner,10,true,ctx.from);award(loser,2,false,ctx.from);
   await send(ctx,'🏆 *RESULTADO DEL DUELO*\n⚔️ '+mention(a.challenger)+' vs '+mention(a.target)+'\n👑 Ganador: '+mention(winner)+'\n🎖️ +10 puntos al ganador y +2 al otro participante.',[a.challenger,a.target]);return true;
  }
  case 'ngrank':{
   const mode=String((ctx.args||[])[0]||'todo').toLowerCase(),k=periods();
-  const rows=Object.entries(db.players).map(([user,d])=>({user,points:mode==='semana'?(d.weekly&&d.weekly[k.week]||0):mode==='mes'?(d.monthly&&d.monthly[k.month]||0):(d.points||0)})).filter(x=>x.points>0).sort((a,b)=>b.points-a.points).slice(0,10);
+  const rows=Object.values(db.players).filter(d=>d.groupId===ctx.from).map(d=>({user:d.userId,points:mode==='semana'?(d.weekly&&d.weekly[k.week]||0):mode==='mes'?(d.monthly&&d.monthly[k.month]||0):(d.points||0)})).filter(x=>x.user&&x.points>0).sort((a,b)=>b.points-a.points).slice(0,10);
   if(!rows.length){await send(ctx,'🏅 Aún no hay puntuaciones. ¡Inauguren el ranking!');return true;}
   const title=mode==='semana'?'SEMANAL':mode==='mes'?'MENSUAL':'GENERAL';
   await send(ctx,'🏆 *RANKING '+title+' NAUFRA GAMES*\n\n'+rows.map((x,i)=>(i+1)+'. '+mention(x.user)+' — *'+x.points+' pts*').join('\n'),rows.map(x=>x.user));return true;
  }
  case 'ngperfil':{
-  const p=player(id);await send(ctx,'🎮 *TU PERFIL NAUFRA GAMES*\n\n👤 '+(ctx.pushname||ctx.senderNumber||'Jugador')+'\n🏆 Puntos: *'+p.points+'*\n🥇 Victorias: *'+p.wins+'*\n🎲 Participaciones: *'+p.played+'*\n\nUsa '+pfx+'ngrank para ver el ranking.');return true;
+  const p=player(id,ctx.from);await send(ctx,'🎮 *TU PERFIL NAUFRA GAMES*\n\n👤 '+(ctx.pushname||ctx.senderNumber||'Jugador')+'\n🏆 Puntos: *'+p.points+'*\n🥇 Victorias: *'+p.wins+'*\n🎲 Participaciones: *'+p.played+'*\n\nUsa '+pfx+'ngrank para ver el ranking.');return true;
  }
  case 'ngapuesta':{
   const amount=Number((ctx.args||[])[0]),choice=clean((ctx.args||[])[1]||'');
