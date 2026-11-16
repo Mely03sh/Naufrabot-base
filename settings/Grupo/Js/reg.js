@@ -1,10 +1,36 @@
 const crypto = require('crypto')
 const fs = require('fs')
-const moment = require("moment-timezone") 
+const path = require('path')
+const moment = require("moment-timezone")
 const time = moment.tz('America/Lima').format('DD/MM HH:mm:ss')
-let Nreg = JSON.parse(fs.readFileSync('./settings/Grupo/Json/registros.json'));
 
-const registro = JSON.parse(fs.readFileSync('./settings/Grupo/Json/registros.json'))
+// Railway volume: /app/session. En local se usa ./session/data.
+const REGISTRO_PATH = process.env.NAUFRA_REGISTRO_PATH ||
+    path.resolve(__dirname, '../../../session/data/registros.json');
+const LEGACY_REGISTRO_PATH = path.resolve(__dirname, '../Json/registros.json');
+
+fs.mkdirSync(path.dirname(REGISTRO_PATH), { recursive: true });
+
+// Migra el JSON anterior solo si aún no existe una copia persistente.
+if (!fs.existsSync(REGISTRO_PATH)) {
+    if (fs.existsSync(LEGACY_REGISTRO_PATH)) {
+        fs.copyFileSync(LEGACY_REGISTRO_PATH, REGISTRO_PATH);
+        console.log('[NAUFRA] Registro de usuarios migrado al almacenamiento persistente.');
+    } else {
+        fs.writeFileSync(REGISTRO_PATH, '[]\n');
+    }
+}
+
+const registro = JSON.parse(fs.readFileSync(REGISTRO_PATH, 'utf8'));
+if (!Array.isArray(registro)) {
+    throw new Error('[NAUFRA] El archivo persistente de registros no contiene una lista JSON válida.');
+}
+
+function guardarRegistro() {
+    const temporal = REGISTRO_PATH + '.tmp';
+    fs.writeFileSync(temporal, JSON.stringify(registro, null, 2) + '\n');
+    fs.renameSync(temporal, REGISTRO_PATH);
+}
 /////REGISTRO
  const AddReg = ( sender, nombre) => {
      const obj = {
@@ -16,7 +42,7 @@ const registro = JSON.parse(fs.readFileSync('./settings/Grupo/Json/registros.jso
   dinero : 50,
   rep : 0}
             registro.push(obj)
-            fs.writeFileSync('./settings/Grupo/Json/registros.json', JSON.stringify(registro, null , 2 )+'\n')
+            guardarRegistro()
         }
 
         
@@ -53,7 +79,7 @@ position = i
 })
 if (position !== false) {
 registro[position].dinero -= monto
-fs.writeFileSync('./settings/Grupo/Json/registros.json', JSON.stringify(registro, null , 2 )+'\n')
+guardarRegistro()
 }
 }
 
@@ -66,7 +92,7 @@ position = i
 })
 if (position !== false) {
 registro[position].dinero += monto
-fs.writeFileSync('./settings/Grupo/Json/registros.json', JSON.stringify(registro, null , 2 )+'\n')
+guardarRegistro()
 }
 }
 
@@ -92,7 +118,7 @@ position = i
 })
 if (position !== false) {
 registro[position].dinero -= monto
-fs.writeFileSync('./settings/Grupo/Json/registros.json', JSON.stringify(registro, null , 2 )+'\n')
+guardarRegistro()
 }
 }
 
@@ -105,7 +131,7 @@ position = i
 })
 if (position !== false) {
 registro[position].dinero += monto
-fs.writeFileSync('./settings/Grupo/Json/registros.json', JSON.stringify(registro, null , 2 )+'\n')
+guardarRegistro()
 }
 }
 
@@ -131,7 +157,7 @@ position = i
 })
 if (position !== false) {
 registro[position].nivel += monto
-fs.writeFileSync('./settings/Grupo/Json/registros.json', JSON.stringify(registro, null , 2 )+'\n')
+guardarRegistro()
 }
 }
 /////ADD XP
@@ -144,7 +170,7 @@ position = i
 })
 if (position !== false) {
 registro[position].xp += monto
-fs.writeFileSync('./settings/Grupo/Json/registros.json', JSON.stringify(registro, null , 2 )+'\n')
+guardarRegistro()
 }
 }
 ////NIVEL DEL USUARIO 
@@ -181,7 +207,7 @@ position = i
 })
 if (position !== false) {
 registro[position].rxp += monto
-fs.writeFileSync('./settings/Grupo/Json/registros.json', JSON.stringify(registro, null , 2 )+'\n')
+guardarRegistro()
 }
 }
 const Rxp = (sender) => {
@@ -225,7 +251,7 @@ const addRep = (usuario, monto) => {
     // Si el usuario fue encontrado y se actualizó, guarda el archivo
     if (status) {
         console.log('Guardando cambios en el archivo JSON...');
-        fs.writeFileSync('./settings/Grupo/Json/registros.json', JSON.stringify(registro, null, 2) + '\n');
+        guardarRegistro()
         console.log('Cambios guardados correctamente.');
     } else {
         console.log('Usuario no encontrado o no se pudo actualizar.');
@@ -259,7 +285,7 @@ const delRep = (usuario, monto) => {
     // Si el usuario fue encontrado y se actualizó, guarda el archivo
     if (status) {
         console.log('Guardando cambios en el archivo JSON...');
-        fs.writeFileSync('./settings/Grupo/Json/registros.json', JSON.stringify(registro, null, 2) + '\n');
+        guardarRegistro()
         console.log('Cambios guardados correctamente.');
     } else {
         console.log('Usuario no encontrado o no se pudo actualizar.');
