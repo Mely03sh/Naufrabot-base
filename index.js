@@ -792,20 +792,20 @@ case 'lista': {
   }
 
   // Parser robusto: reconoce primero la modalidad completa y luego hora/cupos.
-  const entradaTexto = String(q || '').trim().replace(/\\s+/g, ' ')
+  const entradaTexto = String(q || '').trim().replace(/\s+/g, ' ')
   const entradaNormalizada = removeAccents(entradaTexto).toLowerCase()
   const clavesFormato = [...formatos.keys()].sort((a, b) => b.length - a.length)
   const clave = clavesFormato.find(nombre =>
     entradaNormalizada === nombre || entradaNormalizada.startsWith(nombre + ' ')
   ) || ''
-  const resto = clave ? entradaTexto.slice(clave.length).trim().replace(/^\\|\\s*/, '') : ''
-  const partesResto = resto.split(/\\s+/).filter(Boolean)
+  const resto = clave ? entradaTexto.slice(clave.length).trim().replace(/^\|\s*/, '') : ''
+  const partesResto = resto.split(/\s+/).filter(Boolean)
   const esDinamica = clave === 'dinamica'
-  const cantidadTexto = esDinamica ? (partesResto.pop() || '').replace(/^\\|/, '') : ''
-  const hora = partesResto.join(' ').replace(/^\\|\\s*/, '').replace(/\\s*\\|\\s*$/, '').trim()
+  const cantidadTexto = esDinamica ? (partesResto.pop() || '').replace(/^\|/, '') : ''
+  const hora = partesResto.join(' ').replace(/^\|\s*/, '').replace(/\s*\|\s*$/, '').trim()
   const formato = formatos.get(clave)
   const cantidadDinamica = Number(cantidadTexto)
-  const horaValida = /^(?:(?:0?[1-9]|1[0-2])(?::[0-5]\\d)?\\s*(?:am|pm)|(?:[01]?\\d|2[0-3]):[0-5]\\d)$/i.test(hora)
+  const horaValida = /^(?:(?:0?[1-9]|1[0-2])(?::[0-5]\d)?\s*(?:am|pm)|(?:[01]?\d|2[0-3]):[0-5]\d)$/i.test(hora)
   const entrada = Boolean(clave && formato && horaValida && (!esDinamica ||
     (cantidadTexto && Number.isInteger(cantidadDinamica) && cantidadDinamica >= 1 && cantidadDinamica <= 50)))
 
