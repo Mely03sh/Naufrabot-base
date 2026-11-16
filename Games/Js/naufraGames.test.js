@@ -194,7 +194,7 @@ test('compliment tags the selected group member', async () => {
   const target = '333@s.whatsapp.net';
   const ctx = makeCtx({
     comando: 'ngpiropo',
-    info: { message: { extendedTextMessage: { contextInfo: { mentionedJid: [target] } } }
+    info: { message: { extendedTextMessage: { contextInfo: { mentionedJid: [target] } } } }
   });
   await games.handle(ctx);
   assert.match(ctx.sent[0][1].text, /UN PIROPO PARA TI/);
