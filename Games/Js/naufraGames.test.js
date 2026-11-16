@@ -212,6 +212,12 @@ test('targeted advice and compliment require a tagged or replied-to person', asy
   assert.match(compliment.sent[0][1].text, /etiqueta a la persona o responde/);
 });
 
+test('advice and compliment libraries contain at least 100 unique messages each', () => {
+  const game = require('./naufraGames.js');
+  assert.equal(game.messageCounts.advice, 104);
+  assert.equal(game.messageCounts.compliments, 104);
+});
+
 test.after(() => {
   fs.rmSync(tempDir, { recursive: true, force: true });
 });
