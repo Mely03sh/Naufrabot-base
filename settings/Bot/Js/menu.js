@@ -1,289 +1,155 @@
-const Menu = ( timeFt , Bot , prefixo, sender , groupName  , groupMembers ) => {  
-return `
- ❱ ➢${timeFt}, @${sender.split('@')[0]} 
-╭══════════════════ 
-│✦ ➮ sᴏʏ: ${Bot}
-│✦ ➮ ᴘʀᴇғɪᴊᴏ ᴀᴄᴛᴜᴀʟ: *${prefixo}*
-│✦ ➮ ᴠᴇʀsɪᴏ́ɴ: *7.0* 🆕
-│✦ ➮ ᴘᴀɢɪɴᴀ ᴏғɪᴄɪᴀʟ:  https://naufrabot.com
-│✦ ➮ ᴀᴘɪ ᴏғɪᴄɪᴀʟ:  https://api.naufrabot.com
-╰━━━━━─「✪」─━━━━━
+const Menu = (timeFt, Bot, prefixo, sender, groupName, groupMembers) => {
+return \`
+╭━━━〔 🤖 *\${Bot}* 〕━━━╮
+│ 👋 Hola, @\${sender.split('@')[0]}
+│ 🕒 \${timeFt}
+│ ⚙️ Prefijo: *\${prefixo}*
+│ 🌐 naufrabot.com
+╰━━━━━━━━━━━━━━━━━━╯
 
-➮☆ۣۜۜ͜͡ \`📂 ʟɪsᴛᴀ ᴅᴇ ᴄᴏᴍᴀɴᴅᴏs\` ꔷ㆒⸼݇҉ֻ᠂⃟✥    
+       *📚 MENÚ GENERAL*
 
-  ━━━━━─「✪」─━━━━━
-    
-╭
-  ❍ 𝐌𝐄𝐍𝐔 𝐈𝐍𝐅𝐎  ❐
-╰
-*➢ping*
-> ➥Velocidad del bot
-*➢perfil*
-> ➥Mira tu perfil
-*➢ship*
-> ➥porcentaje de que le guste alguien
-*➢botcompleto*     
-> ➥Como tener un bot completo
-*➢grupos*
-> ➥Grupos oficiales 
-*➢canales*
-> ➥Canales oficiales
-*➢serbot*
-> ➥Como ser un bot
-*➢Personalizarbot*
-> ➥Como editar este bot
-*➢miapi*
-> ➥Mira tu API key
-*➢comprarapi*
-> ➥Como adquirir una clave API 
-*➢infocomando*
-> ➥La IA te explica qué hace cualquier otro comando
- 
-╭
-   ❍ 𝐌𝐄𝐍𝐔 𝐁𝐈𝐄𝐍𝐕𝐄𝐍𝐈𝐃𝐀𝐒 🆕  ❐
-╰
-*➢bienvenida 1/0*
-> ➥Activa/desactiva la bienvenida
-*➢despedida 1/0*
-> ➥Activa/desactiva la despedida
-*➢setbienvenida*
-> ➥Cambia el texto de bienvenida
-*➢setdespedida*
-> ➥Cambia el texto de despedida
-*➢setfotobienvenida*
-> ➥Pon tu imagen de bienvenida
-*➢setfotodespedida*
-> ➥Pon tu imagen de despedida
-*➢probarbienvenida*
-> ➥Mira cómo se ve la bienvenida
-*➢probardespedida*
-> ➥Mira cómo se ve la despedida
-*➢resetbienvenida*
-> ➥Vuelve al texto por defecto
-*➢avisosadmin 1/0*
-> ➥Avisa cuando alguien sube/baja de admin
-*➢configbienvenida*
-> ➥Mira la configuración del grupo
+╭━━〔 ℹ️ INFORMACIÓN 〕
+│ • *ping* — Velocidad e información
+│ • *perfil* — Tu perfil
+│ • *ship* — Compatibilidad entre personas
+│ • *grupos* — Grupos oficiales
+│ • *canales* — Canales oficiales
+│ • *serbot* — Cómo ser un bot
+│ • *personalizarbot* — Personalizar el bot
+│ • *miapi* — Consultar tu API key
+│ • *comprarapi* — Adquirir una API key
+│ • *infocomando* — Explicación de comandos con IA
+╰━━━━━━━━━━━━━━━━━━
 
-╭
-   ❍ 𝐌𝐄𝐍𝐔 𝐀𝐃𝐌𝐈𝐍  ❐
-╰  
-*➢antilink 1/0*      
-> ➥Activa/desactiva anti enlaces
-*➢modoadmin 1/0*
-> ➥Activa/desactiva el uso de solo adm.
-*➢todos*
-> ➥menciona a todos con @
-*➢anuncio*
-> ➥otra forma de mencionar a todos
-*➢ban/kick*
-> ➥Elima a un participante
-*➢notify*
-> ➥notificación fantasma
-*➢grupo*
-> ➥abrir/cerrar grupo
-*➢mute*
-> ➥Silencia a alguien (borra sus mensajes) X tiempo
-*➢desmute*
-> ➥Quita el silencio a alguien
-*➢sorteo*
-> ➥Sortea un premio entre los miembros del grupo
-*➢rankrep*
-> ➥Ranking de reputación
-*➢rankcoins*
-> ➥Ranking de coins
-*➢ranknivel*
-> ➥Ranking de nivel
- 
- ╭
-  ❍ 𝐌𝐄𝐍𝐔 𝐃𝐄𝐒𝐂𝐀𝐑𝐆𝐀𝐒  ❐
-╰
-*➢play*
-> ➥Descarga músicas 
-*➢play2*
-> ➥Descarga músicas iPhone
-*➢playvideo*
-> ➥Descarga videos 
-*➢playdoc*
-> ➥Descarga videos en documento
-*➢tiktok*
-> ➥Descarga videos de tiktok
-*➢x*
-> ➥Descarga videos X(Twitter)
-*➢facebook*
-> ➥Descarga videos de facebook 
-*➢instagram*
-> ➥Descarga videos de Instagram
-*➢mediafire*
-> ➥Descarga archivos de mediafire 
-*➢descargarapk*
-> ➥Desacarga apk
-*➢pinterest*
-> ➥Desacarga imagenes de pinterest
-                  
-╭
-   ❍ 𝐌𝐄𝐍𝐔 𝐅𝐈𝐆𝐔𝐒  ❐
-╰
-*➢sticker*
-> ➥convierte imagen/vídeo a sticker
-*➢attp*
-> ➥Convierte texto a sticker 
-*➢attp2*
-> ➥Convierte texto a sticker 
-*➢attp3*
-> ➥Convierte texto a sticker 
-*➢attp4 / attp5 / attp6* 🆕
-> ➥Más estilos de texto a sticker
-*➢buscarsticker* 🆕
-> ➥Busca stickers por nombre
-*➢Emojimix*           
-> ➥Mezcla emojis
-╭
-   ❍ 𝐌𝐄𝐍𝐔 𝐈𝐌𝐀𝐆𝐄𝐍 𝐄 𝐈𝐀 🆕  ❐
-╰
-*➢hd*
-> ➥Mejora una imagen a HD
-*➢removebg*
-> ➥Quita el fondo de una imagen
-*➢imagine*
-> ➥Crea imágenes con IA
-*➢llama*
-> ➥Pregúntale a Llama IA
-╭
-   ❍ 𝐌𝐄𝐍𝐔 𝐂𝐋𝐈𝐌𝐀 🆕  ❐
-╰
-*➢clima*
-> ➥Clima de cualquier ciudad
-*➢mareas*
-> ➥Estado del mar y mareas
-╭
-   ❍ 𝐌𝐄𝐍𝐔 𝐅𝐑𝐄𝐄 𝐅𝐈𝐑𝐄 🆕  ❐
-╰
-*➢perfilff*
-> ➥Perfil de Free Fire por UID
-*➢clanff*
-> ➥Información de un clan
-╭  
-   ❍ 𝐌𝐄𝐍𝐔 𝐇𝐄𝐑𝐑𝐀𝐌𝐈𝐄𝐍𝐓𝐀𝐒  ❐
-╰   
-*➢toimg*
-> ➥convierte sticker a imagen 
-*➢tomp3*      
-> ➥Convierte vídeo a audio
-*➢ytsearch*
-> ➥Buscar videos en Youtube
-*➢wikipedia*
-> ➥Busca información en Wikipedia
-*➢google*
-> ➥Busca información en Google 
-*➢simi*
-> ➥Habla hot con el bot
-*➢horoscopo*
-> ➥pronostico diario horoscopo
-*➢ia*
-> ➥preguntale a IA
-*➢chatgpt*
-> ➥preguntale a chatpgt 
- 
-╭
-   ❍ 𝐍𝐀𝐔𝐅𝐑𝐀 𝐆𝐀𝐌𝐄𝐒 𝐕𝟕 🎮 ❐
-╰
-*➢ngames*
-> ➥Lista de juegos V7
-*➢trivia / acertijo / matematicas*
-> ➥Retos de conocimiento y habilidad
-*➢responder*
-> ➥Contesta el reto activo
-*➢verdad / reto / pregunta*
-> ➥Diversión y dinámicas grupales
-*➢quien / rey*
-> ➥Elecciones aleatorias del grupo
-*➢compatibilidad / beso*
-> ➥Juegos sociales
-*➢casarv7 / divorcio*
-> ➥Parejas virtuales
-*➢duelo / aceptarduelo*
-> ➥Desafía a otro integrante
-*➢ngperfil / ngrank*
-> ➥Puntos, victorias y rankings
-*➢ngapuesta / ngruleta*
-> ➥Apuesta monedas virtuales y juega a la ruleta
-*➢ntorneo abrir 100 / entrar / cerrar*
-> ➥Crea torneos grupales con premios
-*➢batalla @persona / aceptarbatalla*
-> ➥Desafíos de piedra, papel o tijera
-*➢jugada piedra|papel|tijera*
-> ➥Envía tu jugada secreta
-*➢ngpremios*
-> ➥Reclama premios semanales del top 3
-*➢ngconsejo @persona*
-> ➥Envía un consejo y etiqueta a quien quieras
-*➢ngpiropo @persona*
-> ➥Dedica un piropo mencionando a esa persona
-*➢ngconfesion / ngsuerte*
-> ➥Más juegos sociales
+╭━━〔 🏆 NAUFRA COMPETENCIAS 〕
+│ *Listas de competencias Free Fire*
+│
+│ • \`\${prefixo}lista hexagonal 8pm\`
+│ • \`\${prefixo}lista cuadrilatero 8pm\`
+│ • \`\${prefixo}lista scrim femenina 8pm\`
+│ • \`\${prefixo}lista scrim mixta 8pm\`
+│ • \`\${prefixo}lista clk 8pm\`
+│ • \`\${prefixo}lista vv2 8pm\`
+│ • \`\${prefixo}lista liga femenina 8pm\`
+│ • \`\${prefixo}lista liga mixta 8pm\`
+│ • \`\${prefixo}lista dinamica 8pm 20\`
+│
+│ 👥 Crea listas con hora y cupos.
+│ 🔒 Comando disponible para administradores.
+╰━━━━━━━━━━━━━━━━━━
 
-╭                    
-   ❍ 𝐌𝐄𝐍𝐔 - 𝐄𝐂𝐎𝐍𝐎𝐌𝐈𝐀  ❐       
-╰      
-*➢Nivel* 🆕
-> ➥Tu tarjeta de nivel con imagen
-*➢cartera*
-> ➥Revisa tu dinero 
-*➢reg*
-> ➥Regiatrate en el sistema
-*➢listreg*
-> ➥Lista de registrados 
-*➢ruleta* 
-> ➥Juega a la ruleta 
-*➢levelup*
-> ➥Sube de nivel 
-*➢minar*
-> ➥Mina y gana
-*➢regalar*
-> ➥Regala dinero
-*➢mireputacion*
-> ➥Mira tu reputación
-*➢tragamonedas*
-> ➥Juega a tragamonedas 
-*➢dayli*   
-> ➥Recibe tu recompensa diaria
-*➢pescar*      
-> ➥Pesca y gana
-*➢tienda*     
-> ➥Compra y vende experiencia 
-*➢casar* 
-> ➥Parejas aleatorias
-*➢casino*
-> ➥Apuesta tu dinero en el casino
-*➢dado*
-> ➥Apuesta a un número del 1 al 6
-*➢flip*
-> ➥Cara o cruz, apuesta tu dinero
- 
-╭
-    ❍ 𝐌𝐄𝐍𝐔 𝐂𝐑𝐄𝐀𝐃𝐎𝐑  ❐
-╰  
-*➢sercreador*
-> ➥Como convertirte en dueño
-*➢antiprivado*            
-> ➥No aseptar personas en tu privado
-*➢revelarvisu*
-> ➥Revela imagen de vista única 
-*➢reiniciar*
-> ➥Reinicia el bot
-*➢setprefix*
-> ➥Cambia el prefijo del bot
-*➢bangp*
-> ➥Bloquea el uso del bot en un grupo
-*➢unbangp*
-> ➥Desbloquea el uso del bot en un grupo 
-*➢botoff*
-> ➥Apaga el bot      
-*➢boton*
-> ➥Prende el bot
- 
-`}
-module.exports = Menu 
+╭━━〔 🎮 NAUFRA GAMES V7 〕
+│ • *ngames* — Ver juegos disponibles
+│ • *trivia / acertijo / matematicas* — Retos mentales
+│ • *responder* — Responder el reto activo
+│ • *verdad / reto / pregunta* — Dinámicas grupales
+│ • *quien / rey* — Elecciones aleatorias
+│ • *compatibilidad / beso* — Juegos sociales
+│ • *casarv7 / divorcio* — Parejas virtuales
+│ • *duelo / aceptarduelo* — Retos entre jugadores
+│ • *batalla / aceptarbatalla* — Piedra, papel o tijera
+│ • *jugada* — Enviar tu jugada
+│ • *ngperfil / ngrank* — Perfil y clasificación
+│ • *ngapuesta / ngruleta* — Juegos con monedas
+│ • *ntorneo* — Torneos grupales
+│ • *ngpremios* — Premios semanales
+│ • *ngconsejo @persona* — Dedicar un consejo
+│ • *ngpiropo @persona* — Dedicar un piropo
+│ • *ngconfesion / ngsuerte* — Juegos sociales
+╰━━━━━━━━━━━━━━━━━━
 
+╭━━〔 🛡️ ADMINISTRACIÓN 〕
+│ • *antilink 1/0* — Activar o desactivar anti-enlaces
+│ • *modoadmin 1/0* — Solo administradores
+│ • *todos / anuncio* — Mencionar al grupo
+│ • *ban / kick* — Expulsar participante
+│ • *notify* — Notificación
+│ • *grupo* — Abrir o cerrar el grupo
+│ • *mute / desmute* — Silenciar o habilitar
+│ • *sorteo* — Sortear un premio
+│ • *rankrep* — Ranking de reputación
+│ • *rankcoins* — Ranking de monedas
+│ • *ranknivel* — Ranking de niveles
+╰━━━━━━━━━━━━━━━━━━
 
+╭━━〔 👋 BIENVENIDAS 〕
+│ • *bienvenida 1/0* — Activar o desactivar
+│ • *despedida 1/0* — Activar o desactivar
+│ • *setbienvenida* — Editar bienvenida
+│ • *setdespedida* — Editar despedida
+│ • *setfotobienvenida* — Cambiar imagen
+│ • *setfotodespedida* — Cambiar imagen
+│ • *probarbienvenida* — Vista previa
+│ • *probardespedida* — Vista previa
+│ • *resetbienvenida* — Restaurar mensaje
+│ • *avisosadmin 1/0* — Avisos de cambios de admin
+│ • *configbienvenida* — Ver configuración
+╰━━━━━━━━━━━━━━━━━━
+
+╭━━〔 💰 ECONOMÍA Y NIVELES 〕
+│ • *nivel* — Tu tarjeta de nivel
+│ • *cartera* — Consultar saldo
+│ • *reg* — Registrarte
+│ • *listreg* — Ver registrados
+│ • *ruleta / casino* — Juegos de azar
+│ • *levelup* — Subir de nivel
+│ • *minar / pescar* — Ganar monedas
+│ • *regalar* — Regalar dinero
+│ • *mireputacion* — Ver reputación
+│ • *tragamonedas / dado / flip* — Minijuegos
+│ • *dayli* — Recompensa diaria
+│ • *tienda* — Comprar experiencia
+│ • *casar* — Parejas aleatorias
+╰━━━━━━━━━━━━━━━━━━
+
+╭━━〔 📥 DESCARGAS 〕
+│ • *play / play2* — Descargar música
+│ • *playvideo / playdoc* — Descargar videos
+│ • *tiktok* — Videos de TikTok
+│ • *x* — Videos de X
+│ • *facebook* — Videos de Facebook
+│ • *instagram* — Contenido de Instagram
+│ • *mediafire* — Descargar archivos
+│ • *descargarapk* — Descargar APK
+│ • *pinterest* — Imágenes de Pinterest
+╰━━━━━━━━━━━━━━━━━━
+
+╭━━〔 🎨 STICKERS, IMAGEN E IA 〕
+│ • *sticker* — Crear sticker
+│ • *attp / attp2 / attp3 / attp4 / attp5 / attp6* — Texto a sticker
+│ • *buscarsticker* — Buscar stickers
+│ • *emojimix* — Mezclar emojis
+│ • *toimg* — Sticker a imagen
+│ • *hd* — Mejorar imagen
+│ • *removebg* — Quitar fondo
+│ • *imagine* — Crear imágenes con IA
+│ • *llama / ia / chatgpt* — Consultar inteligencia artificial
+╰━━━━━━━━━━━━━━━━━━
+
+╭━━〔 🌦️ HERRAMIENTAS 〕
+│ • *clima / tiempo* — Consultar el clima
+│ • *mareas / marea* — Estado del mar y mareas
+│ • *tomp3* — Convertir video a audio
+│ • *ytsearch* — Buscar videos en YouTube
+│ • *wikipedia* — Consultar Wikipedia
+│ • *google* — Buscar en Google
+│ • *horoscopo* — Horóscopo diario
+│ • *simi* — Conversar con Simi
+╰━━━━━━━━━━━━━━━━━━
+
+╭━━〔 👑 CREADOR DEL BOT 〕
+│ • *sercreador* — Información para ser creador
+│ • *antiprivado* — Control de mensajes privados
+│ • *revelarvisu* — Revelar contenido de vista única
+│ • *reiniciar* — Reiniciar el bot
+│ • *setprefix* — Cambiar prefijo
+│ • *bangp / unbangp* — Bloquear o desbloquear un grupo
+│ • *botoff / boton* — Apagar o encender el bot
+╰━━━━━━━━━━━━━━━━━━
+
+✨ *NAUFRABOT* — herramientas, competencias y diversión.
+🌐 https://naufrabot.com
+\`
+}
+module.exports = Menu
