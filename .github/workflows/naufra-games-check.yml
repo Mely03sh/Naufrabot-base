@@ -24,3 +24,5 @@ jobs:
         run: node -e "JSON.parse(require('fs').readFileSync('Games/Json/naufra_games.json','utf8')); console.log('JSON válido')"
       - name: Load game engine
         run: node -e "const g=require('./Games/Js/naufraGames.js'); if(typeof g.handle!=='function') process.exit(1); console.log('Motor V7 cargado')"
+      - name: Run functional tests
+        run: node --test Games/Js/naufraGames.test.js
