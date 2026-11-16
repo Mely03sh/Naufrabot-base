@@ -15,11 +15,11 @@
 //   {fecha}       -> fecha actual
 // ══════════════════════════════════════════════════════════
 
-const fs = require('fs')
+const { readJson, writeJson } = require('../../persistentJson.js')
 const moment = require('moment-timezone')
 
-const RUTA = './settings/Grupo/Json/bienvenidas.json'
-const RUTA_VIEJA = './settings/Grupo/Json/welkom.json' // usada hasta la V5
+const RUTA = 'settings/Grupo/Json/bienvenidas.json'
+const RUTA_VIEJA = 'settings/Grupo/Json/welkom.json' // usada hasta la V5
 
 // Imagen que se usa si el usuario no tiene foto de perfil y el grupo no puso una propia
 const IMAGEN_POR_DEFECTO = 'https://i.postimg.cc/rzXqHmYQ/20260823-215152.jpg'
@@ -76,7 +76,7 @@ const TEXTO_DEGRADAR = `
 function cargar() {
   let db = {}
   try {
-    if (fs.existsSync(RUTA)) db = JSON.parse(fs.readFileSync(RUTA)) || {}
+    db = readJson(RUTA, {}) || {}
   } catch (e) {
     console.log('⚠️ bienvenidas.json dañado, se crea uno nuevo:', e.message)
     db = {}
@@ -85,8 +85,8 @@ function cargar() {
   // 🔁 Migración automática desde la V5: los grupos que tenían /welcome 1
   // quedan con bienvenida Y despedida activadas, para que nada cambie.
   try {
-    if (fs.existsSync(RUTA_VIEJA)) {
-      const viejos = JSON.parse(fs.readFileSync(RUTA_VIEJA)) || []
+    const viejos = readJson(RUTA_VIEJA, []) || [];
+    if (viejos.length) {
       let migrados = 0
       for (const gid of viejos) {
         if (typeof gid === 'string' && !db[gid]) {
@@ -95,8 +95,8 @@ function cargar() {
         }
       }
       if (migrados) {
-        fs.writeFileSync(RUTA, JSON.stringify(db, null, 2))
-        fs.writeFileSync(RUTA_VIEJA, '[]')
+        writeJson(RUTA, db)
+        writeJson(RUTA_VIEJA, [])
         console.log(`✅ ${migrados} grupo(s) migrados del welcome viejo al nuevo sistema de bienvenidas.`)
       }
     }
@@ -108,7 +108,7 @@ function cargar() {
 let db = cargar()
 
 function guardar() {
-  fs.writeFileSync(RUTA, JSON.stringify(db, null, 2))
+  writeJson(RUTA, db)
 }
 
 function obtener(gid) {
