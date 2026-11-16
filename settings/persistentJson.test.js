@@ -14,7 +14,7 @@ test('persistent JSON helper migrates legacy data and preserves updates', () => 
   fs.writeFileSync(path.join(project, 'Games', 'Json', 'mining.json'), '[{"user":"u1","time":123}]');
   const env = { ...process.env, NAUFRA_DATA_DIR: path.join(volume, 'data') };
   const code = [
-    "const db=require('./settings/persistentJson.js');",
+    `const db=require(${JSON.stringify(path.join(__dirname, 'persistentJson.js'))});`,
     "const first=db.readJson('Games/Json/mining.json', []);",
     "if(first.length!==1 || first[0].user!=='u1') process.exit(2);",
     "first.push({user:'u2',time:456});",
