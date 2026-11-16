@@ -1,9 +1,9 @@
 const Menu = (timeFt, Bot, prefixo, sender, groupName, groupMembers) => {
-return \`
-╭━━━〔 🤖 *\${Bot}* 〕━━━╮
-│ 👋 Hola, @\${sender.split('@')[0]}
-│ 🕒 \${timeFt}
-│ ⚙️ Prefijo: *\${prefixo}*
+return `
+╭━━━〔 🤖 *${Bot}* 〕━━━╮
+│ 👋 Hola, @${sender.split('@')[0]}
+│ 🕒 ${timeFt}
+│ ⚙️ Prefijo: *${prefixo}*
 │ 🌐 naufrabot.com
 ╰━━━━━━━━━━━━━━━━━━╯
 
@@ -25,15 +25,15 @@ return \`
 ╭━━〔 🏆 NAUFRA COMPETENCIAS 〕
 │ *Listas de competencias Free Fire*
 │
-│ • \`\${prefixo}lista hexagonal 8pm\`
-│ • \`\${prefixo}lista cuadrilatero 8pm\`
-│ • \`\${prefixo}lista scrim femenina 8pm\`
-│ • \`\${prefixo}lista scrim mixta 8pm\`
-│ • \`\${prefixo}lista clk 8pm\`
-│ • \`\${prefixo}lista vv2 8pm\`
-│ • \`\${prefixo}lista liga femenina 8pm\`
-│ • \`\${prefixo}lista liga mixta 8pm\`
-│ • \`\${prefixo}lista dinamica 8pm 20\`
+│ • \`${prefixo}lista hexagonal 8pm\`
+│ • \`${prefixo}lista cuadrilatero 8pm\`
+│ • \`${prefixo}lista scrim femenina 8pm\`
+│ • \`${prefixo}lista scrim mixta 8pm\`
+│ • \`${prefixo}lista clk 8pm\`
+│ • \`${prefixo}lista vv2 8pm\`
+│ • \`${prefixo}lista liga femenina 8pm\`
+│ • \`${prefixo}lista liga mixta 8pm\`
+│ • \`${prefixo}lista dinamica 8pm 20\`
 │
 │ 👥 Crea listas con hora y cupos.
 │ 🔒 Comando disponible para administradores.
@@ -150,6 +150,6 @@ return \`
 
 ✨ *NAUFRABOT* — herramientas, competencias y diversión.
 🌐 https://naufrabot.com
-\`
+`
 }
 module.exports = Menu
