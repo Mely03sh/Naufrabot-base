@@ -768,119 +768,170 @@ case 'lista': {
   if (!isGroupAdmins) return enviar(respuesta.admin)
 
   const formatos = new Map([
-    ['scrim femenina', 'SCRIM FEMENINA'],
-    ['scrim mixta', 'SCRIM MIXTA'],
-    ['hexagonal', 'HEXAGONAL'],
-    ['cuadrilatero', 'CUADRILÁTERO'],
-    ['liga femenina', 'LIGA FEMENINA'],
-    ['liga mixta', 'LIGA MIXTA'],
-    ['vv2', 'VV2'],
-    ['clk', 'CLK'],
+    ['scrim femenina', '💜 SCRIM FEMENINA 💜'],
+    ['scrim mixta', '💙 SCRIM MIXTA ⚡'],
+    ['hexagonal', '⚔️ HEXAGONAL ⚔️'],
+    ['cuadrilatero', '🏆 CUADRILÁTERO 🏆'],
+    ['liga femenina', '🌸 LIGA FEMENINA 🌸'],
+    ['liga mixta', '🏅 LIGA MIXTA 🏅'],
+    ['vv2', '🔷 VV2 🔷'],
+    ['clk', '🖤 CLK 🖤'],
+    ['dinamica', '🔥 LISTA DINÁMICA 🔥'],
   ])
 
-  const entrada = /^(.+?)\s+((?:0?[1-9]|1[0-2])(?::[0-5]\d)?\s*(?:am|pm)|(?:[01]?\d|2[0-3]):[0-5]\d)(?:\s*\|\s*(\d+))?$/i.exec(q.trim())
-  const [, tipo = '', hora = '', cupos = '4'] = entrada || []
-  const clave = removeAccents(tipo.toLowerCase()).replace(/\s+/g, ' ')
-  const formato = formatos.get(clave)
+  // Formatos fijos: cada escuadra tiene cuatro integrantes salvo VV2.
+  const configuraciones = {
+    'hexagonal': { equipos: 2, porEquipo: 4, suplentes: 2, etiqueta: 'ESCUADRA', color: '🔹' },
+    'cuadrilatero': { equipos: 3, porEquipo: 4, suplentes: 2, etiqueta: 'ESCUADRA', color: '🔸' },
+    'clk': { equipos: 1, porEquipo: 4, suplentes: 2, etiqueta: 'JUGADORES', color: '🖤' },
+    'vv2': { equipos: 1, porEquipo: 6, suplentes: 2, etiqueta: 'JUGADORES', color: '🔷' },
+    'scrim femenina': { equipos: 1, porEquipo: 4, suplentes: 2, etiqueta: 'JUGADORAS', color: '💜' },
+    'scrim mixta': { equipos: 1, porEquipo: 4, suplentes: 2, etiqueta: 'JUGADORES', color: '💙' },
+    'liga femenina': { equipos: 1, porEquipo: 4, suplentes: 2, etiqueta: 'JUGADORAS', color: '🌸' },
+    'liga mixta': { equipos: 1, porEquipo: 4, suplentes: 2, etiqueta: 'JUGADORES', color: '🏅' },
+  }
 
-  if (!formato || !/^(?:[1-9]|[1-4]\d|50)$/.test(cupos)) {
+  // Acepta tanto ".lista dinamica 8pm 20" como el formato anterior con "|".
+  const entrada = /^(.+?)\s+((?:0?[1-9]|1[0-2])(?::[0-5]\d)?\s*(?:am|pm)|(?:[01]?\d|2[0-3]):[0-5]\d)(?:\s*\|?\s*(\d+))?$/i.exec(q.trim())
+  const [, tipo = '', hora = '', cantidadTexto = ''] = entrada || []
+  const clave = removeAccents(tipo.toLowerCase()).replace(/\s+/g, ' ').trim()
+  const formato = formatos.get(clave)
+  const esDinamica = clave === 'dinamica'
+  const cantidadDinamica = Number(cantidadTexto)
+
+  if (!formato || !entrada || (esDinamica && (!cantidadTexto || !Number.isInteger(cantidadDinamica) || cantidadDinamica < 1 || cantidadDinamica > 50))) {
     return enviar([
-      '🎮 *Listas de Free Fire*',
-      `Ejemplo: ${prefixo}lista scrim femenina 7pm`,
-      'También puedes escribir 7:30pm o 19:00.',
-      'Para cambiar los cupos, agrega | 6 al final.',
-      `Formatos: ${[...formatos.values()].join(', ')}.`,
+      '🎮 *LISTAS DE FREE FIRE*',
+      '',
+      '🕒 Indica la modalidad y la hora.',
+      '• Hexagonal: .lista hexagonal 7pm',
+      '• Cuadrilátero: .lista cuadrilatero 7pm',
+      '• Scrim femenina: .lista scrim femenina 7pm',
+      '• Scrim mixta: .lista scrim mixta 7pm',
+      '• Liga femenina: .lista liga femenina 7pm',
+      '• Liga mixta: .lista liga mixta 7pm',
+      '• VV2: .lista vv2 7pm',
+      '• CLK: .lista clk 7pm',
+      '• Dinámica: .lista dinamica 8pm 20',
+      '',
+      'La dinámica admite de 1 a 50 participantes.',
     ].join('\n'))
   }
 
-  const fecha = moment.tz('America/Bogota').format('DD/MM/YYYY')
-  const horaColombia = hora.toLowerCase().replace(/\s*(am|pm)$/, ' $1')
-  const evento = moment.tz(`${fecha} ${horaColombia}`, [
+  const fechaPublicacion = moment.tz('America/Bogota').format('DD/MM/YYYY')
+  const horaColombia = hora.toLowerCase().replace(/\s*(am|pm)$/, ' $1').replace(/\s+/g, ' ').trim()
+  const evento = moment.tz(`${fechaPublicacion} ${horaColombia}`, [
     'DD/MM/YYYY H:mm',
     'DD/MM/YYYY h:mm a',
     'DD/MM/YYYY h a',
   ], 'en', true, 'America/Bogota')
 
   if (!evento.isValid()) {
-    return enviar('🕒 Escribe la hora de Colombia como 7pm, 7:30pm o 19:00.')
+    return enviar('🕒 Escribe la hora como 8pm, 8:30pm o 20:00.')
   }
 
+  // México tiene varias zonas horarias; se muestran por separado y luego
+  // se agrupan con los demás países cuando coinciden exactamente en fecha y hora.
   const zonas = [
-    ['🇲🇽', 'America/Mexico_City'],
-    ['🇸🇻', 'America/El_Salvador'],
-    ['🇵🇦', 'America/Panama'],
-    ['🇨🇴', 'America/Bogota'],
-    ['🇻🇪', 'America/Caracas'],
-    ['🇺🇸 Este', 'America/New_York'],
-    ['🇺🇸 Centro', 'America/Chicago'],
-    ['🇺🇸 Montaña', 'America/Denver'],
-    ['🇺🇸 Pacífico', 'America/Los_Angeles'],
-    ['🇺🇸 Alaska', 'America/Anchorage'],
-    ['🇺🇸 Hawái', 'Pacific/Honolulu'],
+    ['🇲🇽 Tijuana', 'America/Tijuana'],
+    ['🇲🇽 Hermosillo', 'America/Hermosillo'],
+    ['🇲🇽 Mazatlán', 'America/Mazatlan'],
+    ['🇲🇽 Ciudad de México', 'America/Mexico_City'],
+    ['🇲🇽 Cancún', 'America/Cancun'],
+    ['🇸🇻 El Salvador', 'America/El_Salvador'],
+    ['🇬🇹 Guatemala', 'America/Guatemala'],
+    ['🇨🇴 Colombia', 'America/Bogota'],
+    ['🇪🇨 Ecuador', 'America/Guayaquil'],
+    ['🇻🇪 Venezuela', 'America/Caracas'],
+    ['🇵🇦 Panamá', 'America/Panama'],
   ]
 
   const horarios = new Map()
   for (const [etiqueta, zona] of zonas) {
     const local = evento.clone().tz(zona)
-    const fechaLocal = local.format('DD/MM/YYYY')
-    const horaLocal = local.format('HH:mm')
-    const horario = fechaLocal === fecha
-      ? horaLocal
-      : `${horaLocal} (${fechaLocal})`
+    const fechaLocal = local.format('YYYY-MM-DD')
+    const horaLocal = local.format('h:mm A')
+    const claveHorario = `${fechaLocal}|${horaLocal}`
+    const fechaReferencia = evento.clone().tz(zona).format('DD/MM/YYYY')
+    const fechaEvento = evento.format('DD/MM/YYYY')
+    const fechaTexto = fechaReferencia === fechaEvento ? '' : ` (${fechaReferencia})`
 
-    if (!horarios.has(horario)) horarios.set(horario, [])
-    horarios.get(horario).push(etiqueta)
+    if (!horarios.has(claveHorario)) {
+      horarios.set(claveHorario, { hora: `${horaLocal}${fechaTexto}`, paises: [] })
+    }
+    horarios.get(claveHorario).paises.push(etiqueta)
   }
 
-  const nombreAdmin = pushname.replace(/\s+/g, ' ').trim()
-  const organiza = nombreAdmin || `@${senderNumber}`
-  
-      const estilos = {
-    'scrim femenina': {
-      titulo: '💜˚₊‧୨୧',
-      cierre: '୨୧‧₊˚💜',
-      borde: '୨୧ ━━━━━ 💜 ━━━━━ ୨୧',
-      cupo: '✦💜',
-    },
-    'scrim mixta': {
-      titulo: '💙⚡',
-      cierre: '⚡💜',
-      borde: '◆ ━━━━━ 💙💜 ━━━━━ ◆',
-      cupo: '✦⚡',
-    },
-  }
+  const lineasHorarios = [...horarios.values()]
+    .sort((a, b) => {
+      const parse = value => moment(value.hora.replace(/ \(.+\)$/, ''), 'h:mm A')
+      return parse(a.hora).valueOf() - parse(b.hora).valueOf()
+    })
+    .map(grupo => `│ ${grupo.hora}: ${grupo.paises.join(' · ')}`)
 
-  const estilo = estilos[clave] || {
-    titulo: '⊹˚.⋆',
-    cierre: '⋆.˚⊹',
-    borde: '❀•━━━━━━━━━━━━•❀',
-    cupo: '✦🖤',
-  }
+  const adminNombre = pushname.replace(/\s+/g, ' ').trim()
+  const organizador = adminNombre || `@${senderNumber}`
+  const estilo = {
+    'scrim femenina': { borde: '୨୧ ━━━━━ 💜 ━━━━━ ୨୧', icono: '💜' },
+    'scrim mixta': { borde: '◆ ━━━━━ 💙⚡ ━━━━━ ◆', icono: '💙' },
+    'hexagonal': { borde: '⚔️━━━━━━━━━━━━⚔️', icono: '🔹' },
+    'cuadrilatero': { borde: '🏆━━━━━━━━━━━━🏆', icono: '🔸' },
+    'clk': { borde: '♠️━━━━━━━━━━━━♠️', icono: '🖤' },
+    'vv2': { borde: '🔷━━━━━━━━━━━━🔷', icono: '🔷' },
+    'liga femenina': { borde: '🌸━━━━━━━━━━━━🌸', icono: '🌸' },
+    'liga mixta': { borde: '🏅━━━━━━━━━━━━🏅', icono: '🏅' },
+    'dinamica': { borde: '🔥━━━━━━━━━━━━🔥', icono: '🔥' },
+  }[clave]
 
-  enviar([
-    `${estilo.titulo} *《 \`${formato}\` 》* ${estilo.cierre}`,
-    '╭───◎◎◎◎◎◎◎◎◎◎◎◎◎◎◎◎───╮',
-    `│ *📅 Fecha:* ${fecha}`,
-    '│ *🕒 Horarios:*',
-    ...[...horarios].map(([horario, lugares]) => `│ ⌬${horario}: ${lugares.join(' ')}`),
-    '╰───────◇◆◇──────────╯',
-    estilo.borde,
-    '   𖤐 ESCUADRA 𖤐',
-    estilo.borde,
-    ...Array(Number(cupos)).fill(estilo.cupo),
+  const lineas = [
+    `        *${formato}*`,
+    '╭───────〔 🕒 HORARIOS 〕───────',
+    ...lineasHorarios,
+    '╰────────────────────────────',
     '',
-    estilo.borde,
-    '   𖤐 SUPLENTES 𖤐',
-    estilo.borde,
-    estilo.cupo,
-    estilo.cupo,
+  ]
+
+  if (esDinamica) {
+    lineas.push(
+      estilo.borde,
+      `       *${estilo.icono} PARTICIPANTES (${cantidadDinamica})*`,
+      estilo.borde,
+      ...Array.from({ length: cantidadDinamica }, (_, i) => `${String(i + 1).padStart(2, '0')} │ __________________`),
+    )
+  } else {
+    const config = configuraciones[clave]
+    let numero = 1
+    for (let equipo = 1; equipo <= config.equipos; equipo++) {
+      lineas.push(
+        estilo.borde,
+        `       *${estilo.icono} ${config.equipos > 1 ? `${config.etiqueta} ${equipo}` : config.etiqueta}*`,
+        estilo.borde,
+      )
+      for (let jugador = 0; jugador < config.porEquipo; jugador++) {
+        lineas.push(`${String(numero++).padStart(2, '0')} │ __________________`)
+      }
+      lineas.push('')
+    }
+    lineas.push(
+      estilo.borde,
+      '          *⭐ SUPLENTES*',
+      estilo.borde,
+    )
+    for (let suplente = 0; suplente < config.suplentes; suplente++) {
+      lineas.push(`${String(numero++).padStart(2, '0')} │ __________________`)
+    }
+  }
+
+  lineas.push(
     '',
-    `❀• *ᡣ𐭩 Organiza:* ${organiza}`,
-  ].join('\n'), nombreAdmin ? {} : { mentions: [sender] })
+    `📅 *FECHA DE PUBLICACIÓN:* ${fechaPublicacion}`,
+    `👑 *ORGANIZADO POR:* ${organizador}`,
+  )
+
+  enviar(lineas.join('\n'), adminNombre ? {} : { mentions: [sender] })
   break
-   
- 
 }
+
 //Comandos owner
 
 
