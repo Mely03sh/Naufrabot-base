@@ -86,8 +86,8 @@ function cargar() {
   // 🔁 Migración automática desde la V5: los grupos que tenían /welcome 1
   // quedan con bienvenida Y despedida activadas, para que nada cambie.
   try {
-    if (fs.existsSync(RUTA_VIEJA)) {
-      const viejos = JSON.parse(fs.readFileSync(RUTA_VIEJA)) || []
+    const viejos = readJson(RUTA_VIEJA, []) || [];
+    if (viejos.length) {
       let migrados = 0
       for (const gid of viejos) {
         if (typeof gid === 'string' && !db[gid]) {
