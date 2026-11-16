@@ -869,7 +869,7 @@ case 'lista': {
     })
     .map(grupo => `│ ${grupo.hora}: ${grupo.paises.join(' · ')}`)
 
-  const adminNombre = pushname.replace(/\s+/g, ' ').trim()
+  const adminNombre = String(info?.pushName || pushname || '').replace(/\s+/g, ' ').trim()
   const organizador = adminNombre || `@${senderNumber}`
   const estilo = {
     'scrim femenina': { borde: '୨୧ ━━━━━ 💜 ━━━━━ ୨୧', icono: '💜' },
