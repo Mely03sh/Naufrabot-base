@@ -13,7 +13,7 @@ function resolveDataPath(relativePath) {
   if (typeof relativePath !== 'string' || !relativePath.trim()) {
     throw new TypeError('Se requiere una ruta relativa de datos.');
   }
-  const normalized = relativePath.split('\\\\').join('/').replace(/^\\/+/, '');
+  const normalized = relativePath.split(String.fromCharCode(92)).join('/').replace(/^\\/+/, '');
   const target = path.resolve(DATA_ROOT, normalized);
   if (target !== DATA_ROOT && !target.startsWith(DATA_ROOT + path.sep)) {
     throw new Error('Ruta de datos fuera del directorio persistente.');
