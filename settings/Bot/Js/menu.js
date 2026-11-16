@@ -206,7 +206,7 @@ return `
 > ➥Desafía a otro integrante
 *➢ngperfil / ngrank*
 > ➥Puntos, victorias y rankings
-*➢ngapuesta / ngr uleta*
+*➢ngapuesta / ngruleta*
 > ➥Apuesta monedas virtuales y juega a la ruleta
 *➢ntorneo abrir 100 / entrar / cerrar*
 > ➥Crea torneos grupales con premios
