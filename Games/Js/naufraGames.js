@@ -23,7 +23,7 @@ const RIDDLES = [
 const TRUTHS = ['¿Cuál ha sido tu momento más vergonzoso?','¿Qué cosa nunca has contado en este grupo?','¿Cuál fue tu primer amor?','¿Qué es lo más gracioso que te ha pasado?','¿Qué talento secreto tienes?'];
 const DARES = ['Envía un audio diciendo «hoy soy la estrella del grupo».','Dedícale un cumplido sincero a alguien del grupo.','Escribe una frase completa usando solo emojis.','Cuenta un chiste; el grupo decide si fue bueno.','Menciona a tres personas y diles algo positivo.'];
 const GROUP_QUESTIONS = ['¿Quién tiene más probabilidades de quedarse dormido en una fiesta?','¿Quién sería el mejor líder en una isla desierta?','¿Quién se ríe en el momento menos indicado?','¿Quién sobreviviría mejor a un apocalipsis zombi?','¿Quién es más probable que se vuelva famoso?'];
-function fresh(){return {version:1,players:{},pending:{},couples:{},updatedAt:Date.now()};}
+function fresh(){return {version:1,players:{},pending:{},couples:{},cooldowns:{},updatedAt:Date.now()};}
 function load(){
  try {
   if(!fs.existsSync(DATA_PATH)){fs.mkdirSync(path.dirname(DATA_PATH),{recursive:true});fs.writeFileSync(DATA_PATH,JSON.stringify(fresh(),null,2));}
@@ -32,6 +32,7 @@ function load(){
  } catch(e){console.error('[NAUFRA GAMES] Error leyendo datos:',e.message);return fresh();}
 }
 let db=load();
+db.cooldowns=db.cooldowns||{};
 function save(){db.updatedAt=Date.now();const tmp=DATA_PATH+'.tmp';fs.writeFileSync(tmp,JSON.stringify(db,null,2));fs.renameSync(tmp,DATA_PATH);}
 function periods(){
  const d=new Date(),y=d.getFullYear(),m=y+'-'+String(d.getMonth()+1).padStart(2,'0');
@@ -54,6 +55,13 @@ async function handle(ctx){
  if(!commands.includes(c))return false;
  if(!ctx.isGroup){await send(ctx,'🎮 NAUFRA GAMES funciona dentro de grupos.');return true;}
  if(!ctx.isReg){await send(ctx,'📝 Primero debes registrarte con el comando de registro del bot.');return true;}
+ const cooldownCommands=['verdad','reto','pregunta','quien','rey','compatibilidad','beso','casarv7','duelo','ngapuesta'];
+ if(cooldownCommands.includes(c)){
+  const key=ctx.from+'|'+id+'|'+c,now=Date.now(),until=db.cooldowns[key]||0;
+  if(until>now){await send(ctx,'⏳ Espera '+Math.ceil((until-now)/1000)+' segundos antes de volver a usar este juego.');return true;}
+  db.cooldowns[key]=now+(c==='ngapuesta'?5000:10000);
+  save();
+ }
  switch(c){
  case 'ngames':
   await send(ctx,'🎮 *NAUFRA GAMES V7*\n━━━━━━━━━━━━━━━━\n🧠 *Habilidad*\n• '+pfx+'trivia\n• '+pfx+'acertijo\n• '+pfx+'matematicas\n• '+pfx+'responder respuesta\n\n🎉 *Diversión*\n• '+pfx+'verdad\n• '+pfx+'reto\n• '+pfx+'pregunta\n• '+pfx+'quien\n• '+pfx+'rey\n\n💘 *Social*\n• '+pfx+'compatibilidad @persona\n• '+pfx+'beso @persona\n• '+pfx+'casarv7 @persona\n• '+pfx+'divorcio\n\n⚔️ *Competencia*\n• '+pfx+'duelo @persona\n• '+pfx+'aceptarduelo\n• '+pfx+'ngrank [semana|mes|todo]\n• '+pfx+'ngperfil\n\n🪙 *Monedas*\n• '+pfx+'ngapuesta cantidad cara|cruz\n\n🏅 Juegos sociales gratuitos; las apuestas usan monedas virtuales.');return true;
