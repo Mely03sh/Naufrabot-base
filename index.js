@@ -3836,7 +3836,9 @@ break
 case 'ngames': case 'trivia': case 'acertijo': case 'matematicas': case 'responder':
 case 'verdad': case 'reto': case 'pregunta': case 'quien': case 'rey':
 case 'compatibilidad': case 'beso': case 'casarv7': case 'divorcio':
-case 'duelo': case 'aceptarduelo': case 'ngrank': case 'ngperfil': case 'ngapuesta': {
+case 'duelo': case 'aceptarduelo': case 'ngrank': case 'ngperfil': case 'ngapuesta':
+case 'ngruleta': case 'batalla': case 'aceptarbatalla': case 'jugada':
+case 'ntorneo': case 'ngpremios': case 'ngconfesion': case 'ngpiropo': case 'ngsuerte': {
   const handled = await NaufraGames.handle({
     Naufra, from, info, comando, prefixo, q, args, sender, senderNumber,
     pushname, isGroup, isReg, groupMembers,
