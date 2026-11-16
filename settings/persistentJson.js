@@ -43,7 +43,7 @@ function writeJson(relativePath, value) {
   const target = resolveDataPath(relativePath);
   fs.mkdirSync(path.dirname(target), { recursive: true });
   const temp = target + '.tmp';
-  fs.writeFileSync(temp, JSON.stringify(value, null, 2) + '\\n');
+  fs.writeFileSync(temp, JSON.stringify(value, null, 2) + String.fromCharCode(10));
   fs.renameSync(temp, target);
 }
 
