@@ -4,7 +4,7 @@ return `
 ╭══════════════════ 
 │✦ ➮ sᴏʏ: ${Bot}
 │✦ ➮ ᴘʀᴇғɪᴊᴏ ᴀᴄᴛᴜᴀʟ: *${prefixo}*
-│✦ ➮ ᴠᴇʀsɪᴏ́ɴ: *6.0* 🆕
+│✦ ➮ ᴠᴇʀsɪᴏ́ɴ: *7.0* 🆕
 │✦ ➮ ᴘᴀɢɪɴᴀ ᴏғɪᴄɪᴀʟ:  https://naufrabot.com
 │✦ ➮ ᴀᴘɪ ᴏғɪᴄɪᴀʟ:  https://api.naufrabot.com
 ╰━━━━━─「✪」─━━━━━
@@ -185,6 +185,30 @@ return `
 *➢chatgpt*
 > ➥preguntale a chatpgt 
  
+╭
+   ❍ 𝐍𝐀𝐔𝐅𝐑𝐀 𝐆𝐀𝐌𝐄𝐒 𝐕𝟕 🎮 ❐
+╰
+*➢ngames*
+> ➥Lista de juegos V7
+*➢trivia / acertijo / matematicas*
+> ➥Retos de conocimiento y habilidad
+*➢responder*
+> ➥Contesta el reto activo
+*➢verdad / reto / pregunta*
+> ➥Diversión y dinámicas grupales
+*➢quien / rey*
+> ➥Elecciones aleatorias del grupo
+*➢compatibilidad / beso*
+> ➥Juegos sociales
+*➢casarv7 / divorcio*
+> ➥Parejas virtuales
+*➢duelo / aceptarduelo*
+> ➥Desafía a otro integrante
+*➢ngperfil / ngrank*
+> ➥Puntos, victorias y rankings
+*➢ngapuesta*
+> ➥Apuesta monedas virtuales a cara o cruz
+
 ╭                    
    ❍ 𝐌𝐄𝐍𝐔 - 𝐄𝐂𝐎𝐍𝐎𝐌𝐈𝐀  ❐       
 ╰      
