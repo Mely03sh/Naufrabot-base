@@ -1,6 +1,6 @@
-const fs = require('fs')
-const JsonGamesClaim = `./Games/Json/claim.json`
-const GameClaim = JSON.parse(fs.readFileSync(JsonGamesClaim))
+const { readJson, writeJson } = require('../../settings/persistentJson.js')
+const JsonGamesClaim = 'Games/Json/claim.json'
+const GameClaim = readJson(JsonGamesClaim, [])
 
 const addClaim = ( sender , time ) => {
 const obj = {
@@ -8,7 +8,7 @@ user : sender,
 time : Date.now() + time
 }
 GameClaim.push(obj)
-fs.writeFileSync(JsonGamesClaim,JSON.stringify(GameClaim, null , 2)+'\n')
+writeJson(JsonGamesClaim, GameClaim)
 }
 
 const checkClaim = (sender) => {
@@ -31,7 +31,7 @@ setInterval(() => {
 GameClaim.forEach((item , indice) => {
 if(ahora >= item.time){
 GameClaim.splice(indice , 1)
-fs.writeFileSync(JsonGamesClaim,JSON.stringify(GameClaim,null,2)+'\n')
+writeJson(JsonGamesClaim, GameClaim)
 }
 });
 },5* 60* 1000); // verifica cada 5 min
