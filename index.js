@@ -791,15 +791,25 @@ case 'lista': {
     'liga mixta': { equipos: 1, porEquipo: 4, suplentes: 2, etiqueta: 'JUGADORES', color: '🏅' },
   }
 
-  // Acepta tanto ".lista dinamica 8pm 20" como el formato anterior con "|".
-  const entrada = /^(.+?)\s+((?:0?[1-9]|1[0-2])(?::[0-5]\d)?\s*(?:am|pm)|(?:[01]?\d|2[0-3]):[0-5]\d)(?:\s*\|?\s*(\d+))?$/i.exec(q.trim())
-  const [, tipo = '', hora = '', cantidadTexto = ''] = entrada || []
-  const clave = removeAccents(tipo.toLowerCase()).replace(/\s+/g, ' ').trim()
-  const formato = formatos.get(clave)
+  // Parser robusto: reconoce primero la modalidad completa y luego hora/cupos.
+  const entradaTexto = String(q || '').trim().replace(/\\s+/g, ' ')
+  const entradaNormalizada = removeAccents(entradaTexto).toLowerCase()
+  const clavesFormato = [...formatos.keys()].sort((a, b) => b.length - a.length)
+  const clave = clavesFormato.find(nombre =>
+    entradaNormalizada === nombre || entradaNormalizada.startsWith(nombre + ' ')
+  ) || ''
+  const resto = clave ? entradaTexto.slice(clave.length).trim().replace(/^\\|\\s*/, '') : ''
+  const partesResto = resto.split(/\\s+/).filter(Boolean)
   const esDinamica = clave === 'dinamica'
+  const cantidadTexto = esDinamica ? (partesResto.pop() || '').replace(/^\\|/, '') : ''
+  const hora = partesResto.join(' ').replace(/^\\|\\s*/, '').replace(/\\s*\\|\\s*$/, '').trim()
+  const formato = formatos.get(clave)
   const cantidadDinamica = Number(cantidadTexto)
+  const horaValida = /^(?:(?:0?[1-9]|1[0-2])(?::[0-5]\\d)?\\s*(?:am|pm)|(?:[01]?\\d|2[0-3]):[0-5]\\d)$/i.test(hora)
+  const entrada = Boolean(clave && formato && horaValida && (!esDinamica ||
+    (cantidadTexto && Number.isInteger(cantidadDinamica) && cantidadDinamica >= 1 && cantidadDinamica <= 50)))
 
-  if (!formato || !entrada || (esDinamica && (!cantidadTexto || !Number.isInteger(cantidadDinamica) || cantidadDinamica < 1 || cantidadDinamica > 50))) {
+  if (!formato || !entrada) {
     return enviar([
       '🎮 *LISTAS DE FREE FIRE*',
       '',
@@ -857,7 +867,7 @@ case 'lista': {
     const fechaTexto = fechaReferencia === fechaEvento ? '' : ` (${fechaReferencia})`
 
     if (!horarios.has(claveHorario)) {
-      horarios.set(claveHorario, { hora: `${horaLocal}${fechaTexto}`, paises: [] })
+      const [horaNumero, minutoNumero] = horaLocal.split(':').map(Number)\n      const esPM = horaLocal.endsWith('PM')\n      const minutosDelDia = (horaNumero % 12 + (esPM ? 12 : 0)) * 60 + minutoNumero\n      horarios.set(claveHorario, { hora: `${horaLocal}${fechaTexto}`, minutosDelDia, paises: [] })
     }
     horarios.get(claveHorario).paises.push(etiqueta)
   }
