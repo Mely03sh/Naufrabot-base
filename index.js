@@ -78,6 +78,8 @@ const { MoneyOfSender, addkoin, delkoin, AddReg, checkOfReg , addLevel, addXp,le
      
            // GAMES
 const  { addClaim , checkClaim , timeClaim ,expiredClaim } = require('./Games/Js/claim.js')
+// 🎮 Motor independiente de entretenimiento NAUFRA GAMES V7
+const NaufraGames = require('./Games/Js/naufraGames.js')
 const { checkCasino,checkAttp,checkEmoji,checkEve, addClaimTraga, checkClaimTraga, timeClaimTraga, checkRuleta,checkMinar,addCasino,addAttp,addEmoji,addEve,addRuleta ,addMinar,expiredCasino,expiredMinar,expiredAttp,expiredEmoji,expiredEve,expiredRuleta,timeAttp,timeEmoji,timeEve,timeRuleta,timeMinar,timeCasino,expiredDayli,JsonDayli,addDayli,timeDayli,checkDayli,checkPescar,timePescar,addPescar,expiredPescar}
  = require('./Games/Js/mining.js')
 
@@ -3830,6 +3832,20 @@ break
 
 
 
+// 🎮 NAUFRA GAMES V7 — comandos delegados al módulo independiente
+case 'ngames': case 'trivia': case 'acertijo': case 'matematicas': case 'responder':
+case 'verdad': case 'reto': case 'pregunta': case 'quien': case 'rey':
+case 'compatibilidad': case 'beso': case 'casarv7': case 'divorcio':
+case 'duelo': case 'aceptarduelo': case 'ngrank': case 'ngperfil': case 'ngapuesta': {
+  const handled = await NaufraGames.handle({
+    Naufra, from, info, comando, prefixo, q, args, sender, senderNumber,
+    pushname, isGroup, isReg, groupMembers,
+    addXp, MoneyOfSender, addkoin, delkoin
+  });
+  if (handled) break;
+}
+break;
+
 // COMANDOS SIN PREFIJO
 default:
 
@@ -3886,4 +3902,3 @@ console.log(color('  [❗] El archivo Index fue modificada',"blue"));
 process.exit()
 }
 })
-
