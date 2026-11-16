@@ -893,6 +893,8 @@ case 'lista': {
 
   const lineas = [
     `        *${formato}*`,
+    `📅 *FECHA:* ${fechaPublicacion}`,
+    '',
     '╭───────〔 🕒 HORARIOS 〕───────',
     ...lineasHorarios,
     '╰────────────────────────────',
@@ -932,7 +934,6 @@ case 'lista': {
 
   lineas.push(
     '',
-    `📅 *FECHA DE PUBLICACIÓN:* ${fechaPublicacion}`,
     `👑 *ORGANIZADO POR:* ${organizador}`,
   )
 
