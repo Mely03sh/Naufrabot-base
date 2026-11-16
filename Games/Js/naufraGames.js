@@ -1,7 +1,7 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
-const DATA_PATH = path.join(__dirname, '..', 'Json', 'naufra_games.json');
+const DATA_PATH = process.env.NAUFRA_GAMES_DATA || path.join(__dirname, '..', 'Json', 'naufra_games.json');
 const QUESTIONS = [
  {q:'¿Cuál es el planeta conocido como el planeta rojo?',a:['marte']},
  {q:'¿Cuántos lados tiene un hexágono?',a:['6','seis']},
