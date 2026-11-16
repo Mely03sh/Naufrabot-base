@@ -56,7 +56,7 @@ async function handle(ctx){
  if(!ctx.isReg){await send(ctx,'📝 Primero debes registrarte con el comando de registro del bot.');return true;}
  switch(c){
  case 'ngames':
-  await send(ctx,'🎮 *NAUFRA GAMES V7*\\n━━━━━━━━━━━━━━━━\\n🧠 *Habilidad*\\n• '+pfx+'trivia\\n• '+pfx+'acertijo\\n• '+pfx+'matematicas\\n• '+pfx+'responder respuesta\\n\\n🎉 *Diversión*\\n• '+pfx+'verdad\\n• '+pfx+'reto\\n• '+pfx+'pregunta\\n• '+pfx+'quien\\n• '+pfx+'rey\\n\\n💘 *Social*\\n• '+pfx+'compatibilidad @persona\\n• '+pfx+'beso @persona\\n• '+pfx+'casarv7 @persona\\n• '+pfx+'divorcio\\n\\n⚔️ *Competencia*\\n• '+pfx+'duelo @persona\\n• '+pfx+'aceptarduelo\\n• '+pfx+'ngrank [semana|mes|todo]\\n• '+pfx+'ngperfil\\n\\n🪙 *Monedas*\\n• '+pfx+'ngapuesta cantidad cara|cruz\\n\\n🏅 Juegos sociales gratuitos; las apuestas usan monedas virtuales.');return true;
+  await send(ctx,'🎮 *NAUFRA GAMES V7*\n━━━━━━━━━━━━━━━━\n🧠 *Habilidad*\n• '+pfx+'trivia\n• '+pfx+'acertijo\n• '+pfx+'matematicas\n• '+pfx+'responder respuesta\n\n🎉 *Diversión*\n• '+pfx+'verdad\n• '+pfx+'reto\n• '+pfx+'pregunta\n• '+pfx+'quien\n• '+pfx+'rey\n\n💘 *Social*\n• '+pfx+'compatibilidad @persona\n• '+pfx+'beso @persona\n• '+pfx+'casarv7 @persona\n• '+pfx+'divorcio\n\n⚔️ *Competencia*\n• '+pfx+'duelo @persona\n• '+pfx+'aceptarduelo\n• '+pfx+'ngrank [semana|mes|todo]\n• '+pfx+'ngperfil\n\n🪙 *Monedas*\n• '+pfx+'ngapuesta cantidad cara|cruz\n\n🏅 Juegos sociales gratuitos; las apuestas usan monedas virtuales.');return true;
  case 'trivia':case 'acertijo':case 'matematicas':{
   if(pending(ctx)){await send(ctx,'⏳ Ya hay un reto activo. Responde con '+pfx+'responder tu respuesta.');return true;}
   let item,question,answer;
@@ -64,30 +64,30 @@ async function handle(ctx){
   else if(c==='acertijo'){item=pick(RIDDLES);question=item.q;answer=item.a;}
   else {const a=2+Math.floor(Math.random()*19),b=2+Math.floor(Math.random()*11),op=pick(['+','-','×']);question='¿Cuánto es *'+a+' '+op+' '+b+'*?';answer=[String(op==='+'?a+b:op==='-'?a-b:a*b)];}
   setPending(ctx.from,{type:c,answer:answer,question:question});
-  await send(ctx,'🎯 *'+c.toUpperCase()+' — NAUFRA GAMES*\\n\\n'+question+'\\n\\n⏱️ Tienes 90 segundos.\\n✍️ Responde: *'+pfx+'responder tu respuesta*\\n🏆 Premio: 5 puntos + 2 XP.');return true;
+  await send(ctx,'🎯 *'+c.toUpperCase()+' — NAUFRA GAMES*\n\n'+question+'\n\n⏱️ Tienes 90 segundos.\n✍️ Responde: *'+pfx+'responder tu respuesta*\n🏆 Premio: 5 puntos + 2 XP.');return true;
  }
  case 'responder':{
   if(!q){await send(ctx,'Uso: '+pfx+'responder tu respuesta');return true;}
   const a=pending(ctx);if(!a||!a.answer){await send(ctx,'❌ No hay reto activo o el tiempo terminó.');return true;}
-  if(a.answer.map(clean).includes(clean(q))){delete db.pending[ctx.from];award(id,5,true);if(ctx.addXp)ctx.addXp(id,2);await send(ctx,'🎉 ¡Correcto, '+mention(id)+'!\\n🏆 Ganaste 5 puntos y 2 XP.\\n🧠 Respuesta: *'+a.answer[0]+'*',[id]);}
+  if(a.answer.map(clean).includes(clean(q))){delete db.pending[ctx.from];award(id,5,true);if(ctx.addXp)ctx.addXp(id,2);await send(ctx,'🎉 ¡Correcto, '+mention(id)+'!\n🏆 Ganaste 5 puntos y 2 XP.\n🧠 Respuesta: *'+a.answer[0]+'*',[id]);}
   else await send(ctx,'❌ Esa no es la respuesta. ¡Inténtalo otra vez!');return true;
  }
- case 'verdad':await send(ctx,'💬 *VERDAD*\\n\\n'+pick(TRUTHS));award(id,1,false);return true;
- case 'reto':await send(ctx,'🔥 *RETO*\\n\\n'+pick(DARES));award(id,1,false);return true;
- case 'pregunta':await send(ctx,'💭 *PREGUNTA PARA EL GRUPO*\\n\\n'+pick(GROUP_QUESTIONS)+'\\n\\n¡Que todos participen!');award(id,1,false);return true;
+ case 'verdad':await send(ctx,'💬 *VERDAD*\n\n'+pick(TRUTHS));award(id,1,false);return true;
+ case 'reto':await send(ctx,'🔥 *RETO*\n\n'+pick(DARES));award(id,1,false);return true;
+ case 'pregunta':await send(ctx,'💭 *PREGUNTA PARA EL GRUPO*\n\n'+pick(GROUP_QUESTIONS)+'\n\n¡Que todos participen!');award(id,1,false);return true;
  case 'quien':{
   const m=randomMember(ctx,[id]);if(!m){await send(ctx,'No encontré integrantes para elegir.');return true;}
-  await send(ctx,'🤔 '+pick(GROUP_QUESTIONS)+'\\n\\n🎲 Elección aleatoria: '+mention(m),[m]);award(id,1,false);return true;
+  await send(ctx,'🤔 '+pick(GROUP_QUESTIONS)+'\n\n🎲 Elección aleatoria: '+mention(m),[m]);award(id,1,false);return true;
  }
  case 'rey':{
   const m=randomMember(ctx,[]);if(!m){await send(ctx,'No encontré integrantes para elegir.');return true;}
-  await send(ctx,'👑 *LA CORONA DEL GRUPO ES PARA*\\n\\n'+mention(m)+' 👑',[m]);award(id,2,false);return true;
+  await send(ctx,'👑 *LA CORONA DEL GRUPO ES PARA*\n\n'+mention(m)+' 👑',[m]);award(id,2,false);return true;
  }
  case 'compatibilidad':case 'beso':case 'casarv7':{
   let target=mentioned(ctx)||randomMember(ctx,[id]);if(!target||target===id){await send(ctx,'Uso: '+pfx+c+' @persona');return true;}
-  if(c==='compatibilidad'){const n=Math.floor(Math.random()*101),bar='❤️'.repeat(Math.round(n/10))+'🖤'.repeat(10-Math.round(n/10));await send(ctx,'💘 *TEST DE COMPATIBILIDAD*\\n\\n'+mention(id)+' + '+mention(target)+'\\n'+bar+'\\n💕 Compatibilidad: *'+n+'%*\\n_Solo por diversión._',[id,target]);}
+  if(c==='compatibilidad'){const n=Math.floor(Math.random()*101),bar='❤️'.repeat(Math.round(n/10))+'🖤'.repeat(10-Math.round(n/10));await send(ctx,'💘 *TEST DE COMPATIBILIDAD*\n\n'+mention(id)+' + '+mention(target)+'\n'+bar+'\n💕 Compatibilidad: *'+n+'%*\n_Solo por diversión._',[id,target]);}
   else if(c==='beso')await send(ctx,'😘 '+mention(id)+' le manda un beso virtual a '+mention(target)+' 💋',[id,target]);
-  else {db.couples[id]=target;db.couples[target]=id;save();await send(ctx,'💍 *¡BODA VIRTUAL!*\\n\\n'+mention(id)+' y '+mention(target)+' ahora son pareja de NAUFRA GAMES 💞',[id,target]);}
+  else {db.couples[id]=target;db.couples[target]=id;save();await send(ctx,'💍 *¡BODA VIRTUAL!*\n\n'+mention(id)+' y '+mention(target)+' ahora son pareja de NAUFRA GAMES 💞',[id,target]);}
   award(id,2,false);return true;
  }
  case 'divorcio':{
@@ -97,23 +97,23 @@ async function handle(ctx){
  case 'duelo':{
   const target=mentioned(ctx);if(!target||target===id){await send(ctx,'Uso: '+pfx+'duelo @oponente');return true;}
   if(pending(ctx)){await send(ctx,'⚔️ Ya hay un reto activo en este grupo.');return true;}
-  setPending(ctx.from,{type:'duel',challenger:id,target:target});await send(ctx,'⚔️ '+mention(id)+' reta a '+mention(target)+'.\\n'+mention(target)+', acepta con *'+pfx+'aceptarduelo*. Tienen 90 segundos.',[id,target]);return true;
+  setPending(ctx.from,{type:'duel',challenger:id,target:target});await send(ctx,'⚔️ '+mention(id)+' reta a '+mention(target)+'.\n'+mention(target)+', acepta con *'+pfx+'aceptarduelo*. Tienen 90 segundos.',[id,target]);return true;
  }
  case 'aceptarduelo':{
   const a=pending(ctx);if(!a||a.type!=='duel'){await send(ctx,'No hay duelo pendiente.');return true;}
   if(id!==a.target){await send(ctx,'Solo la persona retada puede aceptar.');return true;}
   delete db.pending[ctx.from];const winner=Math.random()<0.5?a.challenger:a.target,loser=winner===a.challenger?a.target:a.challenger;award(winner,10,true);award(loser,2,false);
-  await send(ctx,'🏆 *RESULTADO DEL DUELO*\\n⚔️ '+mention(a.challenger)+' vs '+mention(a.target)+'\\n👑 Ganador: '+mention(winner)+'\\n🎖️ +10 puntos al ganador y +2 al otro participante.',[a.challenger,a.target]);return true;
+  await send(ctx,'🏆 *RESULTADO DEL DUELO*\n⚔️ '+mention(a.challenger)+' vs '+mention(a.target)+'\n👑 Ganador: '+mention(winner)+'\n🎖️ +10 puntos al ganador y +2 al otro participante.',[a.challenger,a.target]);return true;
  }
  case 'ngrank':{
   const mode=String((ctx.args||[])[0]||'todo').toLowerCase(),k=periods();
   const rows=Object.entries(db.players).map(([user,d])=>({user,points:mode==='semana'?(d.weekly&&d.weekly[k.week]||0):mode==='mes'?(d.monthly&&d.monthly[k.month]||0):(d.points||0)})).filter(x=>x.points>0).sort((a,b)=>b.points-a.points).slice(0,10);
   if(!rows.length){await send(ctx,'🏅 Aún no hay puntuaciones. ¡Inauguren el ranking!');return true;}
   const title=mode==='semana'?'SEMANAL':mode==='mes'?'MENSUAL':'GENERAL';
-  await send(ctx,'🏆 *RANKING '+title+' NAUFRA GAMES*\\n\\n'+rows.map((x,i)=>(i+1)+'. '+mention(x.user)+' — *'+x.points+' pts*').join('\\n'),rows.map(x=>x.user));return true;
+  await send(ctx,'🏆 *RANKING '+title+' NAUFRA GAMES*\n\n'+rows.map((x,i)=>(i+1)+'. '+mention(x.user)+' — *'+x.points+' pts*').join('\n'),rows.map(x=>x.user));return true;
  }
  case 'ngperfil':{
-  const p=player(id);await send(ctx,'🎮 *TU PERFIL NAUFRA GAMES*\\n\\n👤 '+(ctx.pushname||ctx.senderNumber||'Jugador')+'\\n🏆 Puntos: *'+p.points+'*\\n🥇 Victorias: *'+p.wins+'*\\n🎲 Participaciones: *'+p.played+'*\\n\\nUsa '+pfx+'ngrank para ver el ranking.');return true;
+  const p=player(id);await send(ctx,'🎮 *TU PERFIL NAUFRA GAMES*\n\n👤 '+(ctx.pushname||ctx.senderNumber||'Jugador')+'\n🏆 Puntos: *'+p.points+'*\n🥇 Victorias: *'+p.wins+'*\n🎲 Participaciones: *'+p.played+'*\n\nUsa '+pfx+'ngrank para ver el ranking.');return true;
  }
  case 'ngapuesta':{
   const amount=Number((ctx.args||[])[0]),choice=clean((ctx.args||[])[1]||'');
