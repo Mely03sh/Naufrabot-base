@@ -177,6 +177,41 @@ test('profile exposes level and badge progression', async () => {
   assert.match(ctx.sent[0][1].text, /Novato/);
 });
 
+
+test('advice tags the selected group member', async () => {
+  const target = '222@s.whatsapp.net';
+  const ctx = makeCtx({
+    comando: 'ngconsejo',
+    info: { message: { extendedTextMessage: { contextInfo: { mentionedJid: [target] } } } }
+  });
+  await games.handle(ctx);
+  assert.match(ctx.sent[0][1].text, /UN CONSEJO PARA TI/);
+  assert.match(ctx.sent[0][1].text, /@222/);
+  assert.deepEqual(ctx.sent[0][1].mentions, [target]);
+});
+
+test('compliment tags the selected group member', async () => {
+  const target = '333@s.whatsapp.net';
+  const ctx = makeCtx({
+    comando: 'ngpiropo',
+    info: { message: { extendedTextMessage: { contextInfo: { mentionedJid: [target] } } } }
+  });
+  await games.handle(ctx);
+  assert.match(ctx.sent[0][1].text, /UN PIROPO PARA TI/);
+  assert.match(ctx.sent[0][1].text, /@333/);
+  assert.deepEqual(ctx.sent[0][1].mentions, [target]);
+});
+
+test('targeted advice and compliment require a tagged or replied-to person', async () => {
+  const advice = makeCtx({ comando: 'ngconsejo', sender: '555@s.whatsapp.net' });
+  await games.handle(advice);
+  assert.match(advice.sent[0][1].text, /etiqueta a la persona o responde/);
+
+  const compliment = makeCtx({ comando: 'ngpiropo', sender: '444@s.whatsapp.net' });
+  await games.handle(compliment);
+  assert.match(compliment.sent[0][1].text, /etiqueta a la persona o responde/);
+});
+
 test.after(() => {
   fs.rmSync(tempDir, { recursive: true, force: true });
 });

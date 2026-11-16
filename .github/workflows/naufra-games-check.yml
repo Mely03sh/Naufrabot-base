@@ -2,7 +2,7 @@ name: NAUFRA GAMES V7 checks
 
 on:
   push:
-    branches: [feature/naufra-games-v7, feature/naufra-games-expansion]
+    branches: [feature/naufra-games-v7, feature/naufra-games-expansion, feature/naufra-targeted-advice-compliments]
   pull_request:
     branches: [main]
 
