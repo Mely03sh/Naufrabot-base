@@ -134,14 +134,14 @@ async function handle(ctx){
   const payout=amount*multiplier;
   if(payout>0)ctx.addkoin(id,payout);
   if(multiplier===2)award(id,4,true,ctx.from);
-  await send(ctx,'🎰 *RULETA NAUFRA*\\n\\nApuesta: '+amount+' monedas\\nMultiplicador: *x'+multiplier+'*\\n'+(payout>amount?'🎉 Premio: +'+(payout-amount)+' monedas netas.':payout===amount?'🤝 Recuperaste tu apuesta.':'💸 Perdiste '+amount+' monedas.')+'\\n_Probabilidades del juego: 40% pierde, 40% recupera, 20% duplica._');
+  await send(ctx,'🎰 *RULETA NAUFRA*\n\nApuesta: '+amount+' monedas\nMultiplicador: *x'+multiplier+'*\n'+(payout>amount?'🎉 Premio: +'+(payout-amount)+' monedas netas.':payout===amount?'🤝 Recuperaste tu apuesta.':'💸 Perdiste '+amount+' monedas.')+'\n_Probabilidades del juego: 40% pierde, 40% recupera, 20% duplica._');
   return true;
  }
  case 'batalla':{
   const target=mentioned(ctx);if(!target||target===id){await send(ctx,'Uso: '+pfx+'batalla @oponente');return true;}
   if(pending(ctx,'battle')){await send(ctx,'⚔️ Ya existe una batalla pendiente en este grupo.');return true;}
   setPending(ctx.from,'battle',{type:'battle',challenger:id,target,choices:{}});
-  await send(ctx,'⚔️ *BATALLA LANZADA*\\n'+mention(id)+' reta a '+mention(target)+' a piedra, papel o tijera.\\n'+mention(target)+', acepta con *'+pfx+'aceptarbatalla*.',[id,target]);return true;
+  await send(ctx,'⚔️ *BATALLA LANZADA*\n'+mention(id)+' reta a '+mention(target)+' a piedra, papel o tijera.\n'+mention(target)+', acepta con *'+pfx+'aceptarbatalla*.',[id,target]);return true;
  }
  case 'aceptarbatalla':{
   const b=pending(ctx,'battle');if(!b){await send(ctx,'No hay batalla pendiente.');return true;}
@@ -162,7 +162,7 @@ async function handle(ctx){
   if(!draw){const beats={piedra:'tijera',papel:'piedra',tijera:'papel'};winner=beats[a]===z?b.challenger:b.target;}
   if(draw){award(b.challenger,2,false,ctx.from);award(b.target,2,false,ctx.from);}
   else {const loser=winner===b.challenger?b.target:b.challenger;award(winner,10,true,ctx.from);award(loser,2,false,ctx.from);}
-  await send(ctx,'⚔️ *RESULTADO DE BATALLA*\\n'+mention(b.challenger)+': '+a+'\\n'+mention(b.target)+': '+z+'\\n'+(draw?'🤝 ¡Empate! Ambos reciben 2 puntos.':'🏆 Ganador: '+mention(winner)+'\\n+10 puntos al ganador y +2 al rival.'),[b.challenger,b.target]);return true;
+  await send(ctx,'⚔️ *RESULTADO DE BATALLA*\n'+mention(b.challenger)+': '+a+'\n'+mention(b.target)+': '+z+'\n'+(draw?'🤝 ¡Empate! Ambos reciben 2 puntos.':'🏆 Ganador: '+mention(winner)+'\n+10 puntos al ganador y +2 al rival.'),[b.challenger,b.target]);return true;
  }
  case 'ntorneo':{
   const action=clean((ctx.args||[])[0]||'estado'),t=db.tournaments[ctx.from];
@@ -171,7 +171,7 @@ async function handle(ctx){
    if(t&&t.status==='open'){await send(ctx,'Ya hay un torneo abierto en este grupo.');return true;}
    if(Number(ctx.MoneyOfSender(id)||0)<prize){await send(ctx,'No tienes monedas suficientes para financiar el premio.');return true;}
    ctx.delkoin(id,prize);db.tournaments[ctx.from]={status:'open',creator:id,prize,participants:[id],scores:{[id]:0},createdAt:Date.now()};save();
-   await send(ctx,'🏆 *TORNEO NAUFRA ABIERTO*\\nPremio: '+prize+' monedas\\n'+mention(id)+' ya está inscrito.\\nLos demás pueden entrar con *'+pfx+'ntorneo entrar*.\\nEl creador cierra con *'+pfx+'ntorneo cerrar*.',[id]);return true;
+   await send(ctx,'🏆 *TORNEO NAUFRA ABIERTO*\nPremio: '+prize+' monedas\n'+mention(id)+' ya está inscrito.\nLos demás pueden entrar con *'+pfx+'ntorneo entrar*.\nEl creador cierra con *'+pfx+'ntorneo cerrar*.',[id]);return true;
   }
   if(action==='entrar'||action==='unirme'){
    if(!t||t.status!=='open'){await send(ctx,'No hay torneo abierto. Crea uno con '+pfx+'ntorneo abrir 100.');return true;}
@@ -186,10 +186,10 @@ async function handle(ctx){
    if(ranked[0].score===0){await send(ctx,'Todavía nadie ha sumado puntos. Jueguen primero y luego cierren el torneo.');return true;}
    const winners=ranked.filter(x=>x.score===ranked[0].score),winner=pick(winners).user;
    ctx.addkoin(winner,t.prize);t.status='closed';t.winner=winner;t.closedAt=Date.now();save();
-   await send(ctx,'🏆 *TORNEO FINALIZADO*\\nGanador: '+mention(winner)+'\\nPuntos del torneo: '+(t.scores[winner]||0)+'\\nPremio entregado: '+t.prize+' monedas.\\nGracias a todos por participar.',[winner]);return true;
+   await send(ctx,'🏆 *TORNEO FINALIZADO*\nGanador: '+mention(winner)+'\nPuntos del torneo: '+(t.scores[winner]||0)+'\nPremio entregado: '+t.prize+' monedas.\nGracias a todos por participar.',[winner]);return true;
   }
   if(!t||t.status!=='open'){await send(ctx,'No hay torneo abierto. Usa '+pfx+'ntorneo abrir 100 para crear uno.');return true;}
-  await send(ctx,'🏆 *TORNEO EN CURSO*\\nParticipantes: '+t.participants.length+'\\nPremio: '+t.prize+' monedas\\n'+t.participants.map((u,i)=>(i+1)+'. '+mention(u)+' — '+(t.scores[u]||0)+' pts').join('\\n')+'\\nEntra con '+pfx+'ntorneo entrar.',t.participants);return true;
+  await send(ctx,'🏆 *TORNEO EN CURSO*\nParticipantes: '+t.participants.length+'\nPremio: '+t.prize+' monedas\n'+t.participants.map((u,i)=>(i+1)+'. '+mention(u)+' — '+(t.scores[u]||0)+' pts').join('\n')+'\nEntra con '+pfx+'ntorneo entrar.',t.participants);return true;
  }
  case 'ngpremios':{
   const k=periods(),rows=Object.values(db.players).filter(d=>d.groupId===ctx.from).map(d=>({user:d.userId,points:d.weekly&&d.weekly[k.week]||0})).filter(x=>x.user&&x.points>0).sort((a,b)=>b.points-a.points).slice(0,3);
@@ -197,13 +197,13 @@ async function handle(ctx){
   const pos=rows.findIndex(x=>x.user===id);if(pos<0){await send(ctx,'🏅 Aún no tienes puntos esta semana. Juega y vuelve a consultar.');return true;}
   if(paid[ctx.from+'|'+id]){await send(ctx,'🎁 Ya reclamaste tu premio semanal.');return true;}
   const prize=rewards[pos];if(!prize){await send(ctx,'Esta semana no alcanzaste uno de los tres primeros puestos. ¡Sigue jugando!');return true;}
-  ctx.addkoin(id,prize);paid[ctx.from+'|'+id]=true;save();await send(ctx,'🎁 *PREMIO SEMANAL ENTREGADO*\\nPuesto: #'+(pos+1)+'\\nPremio: '+prize+' monedas\\n¡Felicitaciones!');return true;
+  ctx.addkoin(id,prize);paid[ctx.from+'|'+id]=true;save();await send(ctx,'🎁 *PREMIO SEMANAL ENTREGADO*\nPuesto: #'+(pos+1)+'\nPremio: '+prize+' monedas\n¡Felicitaciones!');return true;
  }
- case 'ngconfesion':await send(ctx,'🤫 *CONFESIÓN*\\n\\n'+pick(['Confiesa una pequeña travesura de tu infancia.','¿Qué canción te sabes completa y te da pena admitirlo?','¿Cuál es tu gusto culposo?','¿Qué mentira piadosa has dicho recientemente?','¿Qué hábito extraño tienes?']));award(id,1,false,ctx.from);return true;
- case 'ngpiropo':await send(ctx,'💐 *PIROPO DEL DÍA*\\n\\n'+pick(['Si la belleza fuera tiempo, tú serías la eternidad.','No eres Google, pero tienes todo lo que busco.','Tu sonrisa debería tener su propio club de fans.','Contigo hasta un lunes parece viernes.','Si fueras canción, estarías en repetición.']));award(id,1,false,ctx.from);return true;
+ case 'ngconfesion':await send(ctx,'🤫 *CONFESIÓN*\n\n'+pick(['Confiesa una pequeña travesura de tu infancia.','¿Qué canción te sabes completa y te da pena admitirlo?','¿Cuál es tu gusto culposo?','¿Qué mentira piadosa has dicho recientemente?','¿Qué hábito extraño tienes?']));award(id,1,false,ctx.from);return true;
+ case 'ngpiropo':await send(ctx,'💐 *PIROPO DEL DÍA*\n\n'+pick(['Si la belleza fuera tiempo, tú serías la eternidad.','No eres Google, pero tienes todo lo que busco.','Tu sonrisa debería tener su propio club de fans.','Contigo hasta un lunes parece viernes.','Si fueras canción, estarías en repetición.']));award(id,1,false,ctx.from);return true;
  case 'ngsuerte':{
   const fortunes=['🍀 Hoy es un buen día para intentar algo nuevo.','✨ Una conversación inesperada te alegrará el día.','🌟 Tu esfuerzo está más cerca de dar frutos.','💛 Comparte una buena energía y volverá a ti.','🎯 Una oportunidad aparece cuando menos lo esperas.'];
-  await send(ctx,'🔮 *TU MENSAJE DE SUERTE*\\n\\n'+pick(fortunes));award(id,1,false,ctx.from);return true;
+  await send(ctx,'🔮 *TU MENSAJE DE SUERTE*\n\n'+pick(fortunes));award(id,1,false,ctx.from);return true;
  }
  case 'ngapuesta':{
   const amount=Number((ctx.args||[])[0]),choice=clean((ctx.args||[])[1]||'');
